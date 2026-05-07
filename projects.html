@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-projlayout="list">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Projects — Ademar Tutor</title>
+<meta name="description" content="Open-source systems and research artifacts on multi-agent orchestration." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-screen-label="02 Projects">
+<div id="nav-mount"></div>
+
+<main class="shell">
+
+  <header class="page-head">
+    <p class="eyebrow"><span class="dot" aria-hidden="true"></span>§ projects</p>
+    <h1 class="display">Open-source systems &amp; research artifacts.</h1>
+    <p class="lede">
+      Most started as research questions and ended up as code. Some came from
+      papers I was reading, some from problems I ran into in production, some
+      from ideas worth a weekend. Each links to a write-up, the repo, or both.
+    </p>
+  </header>
+
+  <section class="section" style="border-top: 1px solid var(--rule);">
+    <div class="rail">
+      <div class="rail-label"><span class="num">index</span>jump to</div>
+      <div class="rail-body">
+        <ul class="proj-bullets" style="font-size: 13px;">
+          <li><a href="#dissertation">Dissertation system</a> · in progress</li>
+          <li><a href="#lexitau">LexiTau</a> · agentic Text-to-SQL</li>
+          <li><a href="#judge">LLM-as-a-Judge Evaluator</a> · evaluation methodology</li>
+          <li><a href="#lexextract">LexExtract</a> · OCR → Text-to-SQL</li>
+          <li><a href="#safebeauty">SafeBeautyLedger</a> · blockchain traceability</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIST view (default) and CARD view (alt) — both rendered, CSS toggles -->
+  <section class="section" id="projects-main">
+    <div class="rail">
+      <div class="rail-label"><span class="num">§ 01</span>research &amp; OSS</div>
+      <div class="rail-body" style="max-width: none;">
+
+        <ul class="proj-list">
+          <li class="proj-row" id="dissertation" tabindex="0">
+            <div class="proj-head">
+              <h3 class="proj-title">Dissertation system <span class="arrow" aria-hidden="true">→</span></h3>
+              <span class="proj-meta">2025– · in progress</span>
+            </div>
+            <p class="proj-summary">
+              A research-grade multi-agent system for the MAI study at Waikato. Participants
+              use it to complete data-work tasks: load → profile → train → evaluate → predict → deploy.
+            </p>
+            <div class="proj-detail">
+              <ul class="proj-bullets">
+                <li>Planner-with-revision orchestration topology</li>
+                <li>Typed tool registry (data primitives) the agents call into</li>
+                <li>Sandboxed code execution for generated Python</li>
+                <li>Structured observability traces for trust calibration and failure analysis</li>
+                <li>Reproducibility: same-participant runs comparable; different-participant runs can't drift</li>
+              </ul>
+              <div class="proj-links">
+                <span class="muted">repo link when public</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="proj-row" id="lexitau" tabindex="0">
+            <div class="proj-head">
+              <h3 class="proj-title">LexiTau <span class="arrow" aria-hidden="true">→</span></h3>
+              <span class="proj-meta">2025 · agentic text-to-sql</span>
+            </div>
+            <p class="proj-summary">
+              Agentic Text-to-SQL pipeline for financial document querying. End-to-end:
+              profiling → metadata → schema linking → SQL draft → safety checks → execution → narrative explanation.
+            </p>
+            <div class="proj-detail">
+              <ul class="proj-bullets">
+                <li>RAG-based schema context retrieval (Jaccard over metadata, cosine on queries)</li>
+                <li>Multi-tenant isolation: per-tenant embeddings, scoped auth, row-level policies</li>
+                <li>OCR ingestion (Azure Form Recognizer) normalised into tenant-scoped tables</li>
+                <li>Stack: FastAPI · PostgreSQL+pgvector · SQLAlchemy · Celery/Redis · Next.js · Docker Compose</li>
+              </ul>
+              <p class="proj-summary"><em>Multi-tenant RAG with real isolation is rare in public artifacts.</em></p>
+              <div class="proj-links">
+                <a href="https://github.com/iamademar/LexiTau" target="_blank" rel="noopener">github · iamademar/LexiTau</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="proj-row" id="judge" tabindex="0">
+            <div class="proj-head">
+              <h3 class="proj-title">LLM-as-a-Judge Evaluator <span class="arrow" aria-hidden="true">→</span></h3>
+              <span class="proj-meta">2025 · evaluation methodology</span>
+            </div>
+            <p class="proj-summary">
+              Statistical-rigor evaluation framework for LLM-judged outputs. Seven SPIN-based
+              scoring dimensions, evaluated with QWK, Pearson r, and ±1 accuracy — three metrics
+              that disagree about which judge is best, which is the point.
+            </p>
+            <div class="proj-detail">
+              <ul class="proj-bullets">
+                <li>Pydantic schema enforcement; prompt-level contracts for deterministic, auditable outputs</li>
+                <li>Tenant-scoped prompt versioning with audit trails (Postgres + SQLAlchemy)</li>
+                <li>Score-once / evaluate-many workflow that cuts LLM cost without losing fidelity</li>
+                <li>Multi-LLM provider integration (OpenAI · Anthropic · Google)</li>
+                <li>Stack: FastAPI · PostgreSQL · SQLAlchemy · LangChain · Docker · Azure Container Apps</li>
+              </ul>
+              <div class="proj-links">
+                <a href="https://github.com/iamademar/llm-as-a-judge-sales-coach" target="_blank" rel="noopener">github</a>
+                <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">write-up: pipeline</a>
+                <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">evaluation</a>
+                <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">prompts</a>
+                <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">deploy</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="proj-row" id="lexextract" tabindex="0">
+            <div class="proj-head">
+              <h3 class="proj-title">LexExtract <span class="arrow" aria-hidden="true">→</span></h3>
+              <span class="proj-meta">2024 · ocr → text-to-sql</span>
+            </div>
+            <p class="proj-summary">
+              OCR-to-Text-to-SQL platform for financial document querying. Natural-language
+              queries over PDF-extracted financial data.
+            </p>
+            <div class="proj-detail">
+              <ul class="proj-bullets">
+                <li>Full pipeline: PaddleOCR → LLM-based Text-to-SQL with memory-efficient processing and progressive fallback</li>
+                <li>Explainable query outputs through structured SQL generation and validation layers</li>
+                <li>Stack: FastAPI · PostgreSQL · PaddleOCR · Mistral 7B · Docker</li>
+              </ul>
+              <div class="proj-links">
+                <a href="https://github.com/iamademar/LexExtract" target="_blank" rel="noopener">github · iamademar/LexExtract</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="proj-row" id="safebeauty" tabindex="0">
+            <div class="proj-head">
+              <h3 class="proj-title">SafeBeautyLedger <span class="arrow" aria-hidden="true">→</span></h3>
+              <span class="proj-meta">2024 · blockchain · gdip</span>
+            </div>
+            <p class="proj-summary">
+              Blockchain traceability for beauty-industry product provenance. Immutable history,
+              public verification, on-chain product registry.
+            </p>
+            <div class="proj-detail">
+              <ul class="proj-bullets">
+                <li>Solidity smart contracts (Hardhat) with versioned product records, event-driven history retrieval</li>
+                <li>On-chain / off-chain data flow integration</li>
+                <li>Stack: Solidity (Hardhat) · Node.js + TypeScript · PostgreSQL · Ethers.js · Next.js</li>
+              </ul>
+              <p class="proj-summary"><em>Outside the multi-agent work, but a useful counterpoint — different problem class, same engineering discipline.</em></p>
+              <div class="proj-links">
+                <a href="https://github.com/iamademar/safebeautyledger" target="_blank" rel="noopener">github · iamademar/safebeautyledger</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- alternate "cards" layout, hidden by default -->
+        <div class="proj-grid" aria-hidden="true">
+          <a class="proj-card" href="#dissertation">
+            <span class="proj-meta">2025– · in progress</span>
+            <h3 class="proj-title">Dissertation system</h3>
+            <p class="proj-summary">Research-grade multi-agent system for the MAI study at Waikato. Planner-with-revision, typed tool registry, sandboxed exec.</p>
+          </a>
+          <a class="proj-card" href="#lexitau">
+            <span class="proj-meta">2025 · agentic text-to-sql</span>
+            <h3 class="proj-title">LexiTau</h3>
+            <p class="proj-summary">Agentic Text-to-SQL for financial documents. RAG schema retrieval, multi-tenant isolation, OCR ingestion.</p>
+          </a>
+          <a class="proj-card" href="#judge">
+            <span class="proj-meta">2025 · evaluation</span>
+            <h3 class="proj-title">LLM-as-a-Judge Evaluator</h3>
+            <p class="proj-summary">Statistical-rigor evaluation: QWK, Pearson r, ±1 accuracy across seven SPIN-based dimensions.</p>
+          </a>
+          <a class="proj-card" href="#lexextract">
+            <span class="proj-meta">2024 · ocr</span>
+            <h3 class="proj-title">LexExtract</h3>
+            <p class="proj-summary">PaddleOCR → LLM-based Text-to-SQL with memory-efficient processing and progressive fallback.</p>
+          </a>
+          <a class="proj-card" href="#safebeauty">
+            <span class="proj-meta">2024 · blockchain</span>
+            <h3 class="proj-title">SafeBeautyLedger</h3>
+            <p class="proj-summary">On-chain product registry with versioned records and event-driven history retrieval.</p>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="rail">
+      <div class="rail-label"><span class="num">§ 02</span>get in touch</div>
+      <div class="rail-body">
+        <h2 class="section-h">Open to conversations about applied multi-agent research.</h2>
+        <div class="contact" style="margin-top: 1rem;">
+          <a href="mailto:hey@ademartutor.com">hey@ademartutor.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div id="footer-mount"></div>
+
+<script src="chrome.js"></script>
+</body>
+</html>
