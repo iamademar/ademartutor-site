@@ -3,23 +3,126 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>About — Ademar Tutor</title>
+        <title>About Ademar Tutor — AI engineer in Hamilton, NZ</title>
         <meta
             name="description"
-            content="AI engineer and researcher based in Hamilton, New Zealand. 15 years across NZ, AU, UK, Singapore, and the US."
+            content="Ademar Tutor — AI engineer and researcher in Hamilton, NZ. 15 years across NZ, AU, UK, Singapore and the US, leading engineering at Bootyard, LeagueSide, HURR, and Codetoki."
         />
+        <link rel="canonical" href="https://www.ademartutor.com/about" />
+
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+
+        <meta property="og:type" content="profile" />
+        <meta property="og:site_name" content="Ademar Tutor" />
+        <meta property="og:title" content="About Ademar Tutor — AI engineer in Hamilton, NZ" />
+        <meta property="og:description" content="AI engineer and researcher in Hamilton, NZ. 15 years across NZ, AU, UK, Singapore and the US, leading engineering at Bootyard, LeagueSide, HURR, and Codetoki." />
+        <meta property="og:url" content="https://www.ademartutor.com/about" />
+        <meta property="og:image" content="https://www.ademartutor.com/assets/og-about.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Ademar Tutor — about, background, and 15 years of engineering work." />
+        <meta property="og:locale" content="en_NZ" />
+        <meta property="profile:first_name" content="Ademar" />
+        <meta property="profile:last_name" content="Tutor" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="About Ademar Tutor — AI engineer in Hamilton, NZ" />
+        <meta name="twitter:description" content="15 years across NZ, AU, UK, Singapore and the US. Now researching multi-agent orchestration at Waikato." />
+        <meta name="twitter:image" content="https://www.ademartutor.com/assets/og-about.png" />
+        <meta name="twitter:image:alt" content="Ademar Tutor — about page." />
+
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Person",
+              "@id": "https://www.ademartutor.com/#person",
+              "name": "Ademar Tutor",
+              "url": "https://www.ademartutor.com/",
+              "mainEntityOfPage": "https://www.ademartutor.com/about",
+              "jobTitle": "AI engineer and researcher",
+              "description": "AI engineer and researcher in Hamilton, New Zealand. 15 years building software systems across NZ, AU, UK, Singapore, and the US.",
+              "knowsAbout": [
+                "Multi-agent systems",
+                "Multi-agent orchestration",
+                "AutoML",
+                "Large language models",
+                "AI engineering",
+                "Machine learning",
+                "Human-computer interaction",
+                "Software engineering"
+              ],
+              "homeLocation": {
+                "@type": "Place",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Hamilton",
+                  "addressRegion": "Waikato",
+                  "addressCountry": "NZ"
+                }
+              },
+              "alumniOf": {
+                "@type": "CollegeOrUniversity",
+                "name": "University of Waikato",
+                "url": "https://www.waikato.ac.nz/",
+                "sameAs": "https://en.wikipedia.org/wiki/University_of_Waikato"
+              },
+              "worksFor": { "@id": "https://www.ademartutor.com/#adematic" },
+              "sameAs": [
+                "https://github.com/iamademar",
+                "https://nz.linkedin.com/in/ademar-tutor-0a95972a"
+              ]
+            },
+            {
+              "@type": "Organization",
+              "@id": "https://www.ademartutor.com/#adematic",
+              "name": "Adematic",
+              "url": "https://www.ademartutor.com/",
+              "founder": { "@id": "https://www.ademartutor.com/#person" },
+              "description": "Independent AI engineering practice focused on multi-agent orchestration, multi-LLM pipelines, and agentic systems for SEO/MarTech clients."
+            },
+            {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.ademartutor.com/" },
+                { "@type": "ListItem", "position": 2, "name": "About", "item": "https://www.ademartutor.com/about" }
+              ]
+            }
+          ]
+        }
+        </script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://cdn.prod.website-files.com" crossorigin />
         <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap"
         />
         <link rel="stylesheet" href="styles.css" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
     </head>
     <body data-screen-label="03 About">
-        <div id="nav-mount"></div>
+        <nav class="nav" aria-label="Primary">
+            <div class="shell nav-inner">
+                <a class="nav-name" href="/" aria-label="Ademar Tutor — home" data-page="home">
+                    <span class="sigil" aria-hidden="true"></span>
+                    <span>Ademar Tutor</span>
+                </a>
+                <div class="nav-links">
+                    <a href="/projects" data-page="projects">projects</a>
+                    <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">writing</a>
+                    <a href="/about" data-page="about">about</a>
+                    <a href="mailto:hey@ademartutor.com">email</a>
+                </div>
+            </div>
+        </nav>
 
-        <main class="shell">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <main class="shell" id="main">
             <header class="page-head">
                 <p class="eyebrow">
                     <span class="dot" aria-hidden="true"></span>§ about
@@ -44,30 +147,50 @@
                         <img
                             src="https://cdn.prod.website-files.com/68012d520fb5f7a95d351696/6813a18506aa8f3ed82c4526_Section%20Meet%20your%20developer%20.png"
                             alt="Ademar Tutor at AUT"
+                            width="940"
+                            height="788"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </figure>
                     <figure>
                         <img
                             src="https://cdn.prod.website-files.com/68012d520fb5f7a95d351696/68139dc2cd1d6c97f97a8981_2.png"
                             alt="With Matz, creator of Ruby"
+                            width="940"
+                            height="788"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </figure>
                     <figure>
                         <img
                             src="https://cdn.prod.website-files.com/68012d520fb5f7a95d351696/68139dc106aa8f3ed829922b_1.png"
                             alt="With AUT Ventures"
+                            width="940"
+                            height="788"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </figure>
                     <figure>
                         <img
                             src="https://cdn.prod.website-files.com/68012d520fb5f7a95d351696/68139dc02525bf4cfa386885_4.png"
                             alt="At Y4iT talk"
+                            width="940"
+                            height="788"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </figure>
                     <figure>
                         <img
                             src="https://cdn.prod.website-files.com/68012d520fb5f7a95d351696/68139dc2cbe7fca97b29cc00_5.png"
                             alt="At AUT campus"
+                            width="940"
+                            height="788"
+                            loading="lazy"
+                            decoding="async"
                         />
                     </figure>
                 </div>
@@ -83,6 +206,26 @@
                         <h2 class="section-h">
                             Adematic — Independent AI Engineering
                         </h2>
+                        <p>
+                            Adematic is my independent AI engineering practice,
+                            shipping production multi-LLM orchestration and
+                            agentic pipelines for SEO and MarTech clients
+                            including
+                            <a
+                                href="https://visibilitylabs.ai/"
+                                target="_blank"
+                                rel="noopener"
+                                >Visibility Labs</a
+                            >
+                            and
+                            <a
+                                href="https://180marketing.com/"
+                                target="_blank"
+                                rel="noopener"
+                                >180 Marketing</a
+                            >. Models in active rotation: Anthropic Claude,
+                            OpenAI GPT, Google Gemini, Perplexity.
+                        </p>
 
                         <div
                             class="work-row"
@@ -484,6 +627,11 @@
                                 >github</a
                             >
                         </div>
+                        <p style="margin-top: 1.4rem">
+                            See also:
+                            <a href="/projects">selected projects</a> ·
+                            <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">writing</a>.
+                        </p>
                         <div style="margin-top: 1.6rem">
                             <span
                                 class="sig"
@@ -496,8 +644,21 @@
             </section>
         </main>
 
-        <div id="footer-mount"></div>
+        <footer class="footer shell" role="contentinfo">
+            <div class="left">
+                <span>© 2026 Ademar Tutor</span>
+                <span>Hamilton · NZ</span>
+            </div>
+            <div class="left">
+                <a href="https://github.com/iamademar" target="_blank" rel="noopener">github</a>
+                <a href="https://nz.linkedin.com/in/ademar-tutor-0a95972a" target="_blank" rel="noopener">linkedin</a>
+                <a href="https://blog.ademartutor.com" target="_blank" rel="noopener">writing</a>
+                <a href="mailto:hey@ademartutor.com">email</a>
+                <a href="#" data-cookie-settings>cookie settings</a>
+            </div>
+        </footer>
 
         <script src="chrome.js"></script>
+        <script src="analytics.js" defer></script>
     </body>
 </html>

@@ -1,0 +1,22 @@
+# Ademar Tutor
+
+> Ademar Tutor is an AI engineer and researcher based in Hamilton, New Zealand, working on multi-agent orchestration for data operations. He is completing a Master's in AI at the University of Waikato, building GLAMLI — a multi-agent LLM-augmented AutoML system — as his dissertation, paired with a within-subjects UX study on usability, understanding, and trust. He has 15 years of engineering and engineering-leadership experience across NZ, AU, UK, Singapore, and the US, including roles at Bootyard (engineering lead, 2011–2024) and Codetoki (engineering lead, 2012–2015), and runs Adematic, an independent AI engineering practice serving SEO/MarTech clients including Visibility Labs and 180 Marketing.
+
+## About
+
+- [About Ademar Tutor](https://www.ademartutor.com/about): Background, current focus on multi-agent systems for data operations, and a chronological account of work from 2011 to present across Bootyard, LeagueSide (acquired by TeamSnap, 2022), HURR (white-label rental SaaS for Selfridges, Matches, John Lewis, Flannels), Codetoki (in-browser compilers for coding assessment, JFDI Asia accelerator), and Adematic.
+
+## Projects
+
+- [Projects](https://www.ademartutor.com/projects): Index of open-source systems and research artifacts on multi-agent orchestration, including GLAMLI (the dissertation system) and Adematic client work.
+- [Home page](https://www.ademartutor.com/): Top-level summary of current work — the GLAMLI dissertation, Adematic engagements, and a short background section linking to the full work history.
+
+## Writing
+
+- [Blog](https://blog.ademartutor.com): Long-form writing on multi-agent orchestration, AutoML, and AI engineering practice.
+
+## Contact
+
+- Email: hey@ademartutor.com
+- GitHub: https://github.com/iamademar
+- LinkedIn: https://nz.linkedin.com/in/ademar-tutor-0a95972a
