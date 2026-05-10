@@ -9,11 +9,8 @@
   },
   "routes": [
     { "route": "/index.html", "redirect": "/", "statusCode": 301 },
-    { "route": "/index.html/", "redirect": "/", "statusCode": 301 },
     { "route": "/about.html", "redirect": "/about", "statusCode": 301 },
-    { "route": "/about.html/", "redirect": "/about", "statusCode": 301 },
     { "route": "/projects.html", "redirect": "/projects", "statusCode": 301 },
-    { "route": "/projects.html/", "redirect": "/projects", "statusCode": 301 },
     {
       "route": "/assets/*",
       "headers": {
