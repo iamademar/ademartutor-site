@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WEKA API Server — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-subtle: #f6f9fc;
+    --bg-code: #1a1f36;
+    --bg-code-deep: #0a1227;
+    --text: #0a2540;
+    --text-muted: #425466;
+    --text-faint: #8898aa;
+    --text-code: #c9d4e3;
+    --border: #e3e8ee;
+    --border-dark: rgba(255,255,255,0.08);
+    --accent: #635bff;
+    --accent-hover: #4f46e5;
+    --teal: #00d4ff;
+    --green: #3ecf8e;
+    --orange: #ff8f0e;
+    --red: #ff5630;
+    --purple: #a78bfa;
+    --yellow: #f7d774;
+    --sidebar-width: 280px;
+    --header-height: 56px;
+    --content-max: 880px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  code, pre, .mono { font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace; }
+
+  /* ============ HEADER ============ */
+  header.topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--header-height);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid var(--border);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 24px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #635bff 0%, #00d4ff 100%);
+    display: grid; place-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(99,91,255,0.3);
+  }
+  .brand-divider { color: var(--text-faint); font-weight: 400; }
+  .brand-subtitle { color: var(--text-muted); font-weight: 500; font-size: 14px; }
+  .topbar-nav { display: flex; gap: 4px; margin-left: 12px; flex: 1; }
+  .topbar-nav a {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background 120ms, color 120ms;
+  }
+  .topbar-nav a:hover { background: var(--bg-subtle); color: var(--text); }
+  .topbar-nav a.active { color: var(--accent); }
+  .topbar-actions { display: flex; gap: 10px; align-items: center; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .pill-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(62,207,142,0.18);
+  }
+  .search {
+    width: 240px;
+    height: 32px;
+    padding: 0 10px 0 32px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-subtle) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238898aa' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.3-4.3'%3E%3C/path%3E%3C/svg%3E") no-repeat 10px center;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+
+  /* ============ LAYOUT ============ */
+  .layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    margin-top: var(--header-height);
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  /* ============ SIDEBAR ============ */
+  aside.sidebar {
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 24px 0 60px;
+    background: var(--bg);
+  }
+  .sidebar-title {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-faint);
+    letter-spacing: 0.06em;
+    padding: 16px 24px 8px;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 24px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    line-height: 1.7;
+  }
+  .sidebar-link:hover { color: var(--text); }
+  .sidebar-link.active {
+    color: var(--accent);
+    font-weight: 600;
+    border-left-color: var(--accent);
+    background: linear-gradient(90deg, rgba(99,91,255,0.06), transparent);
+  }
+  .sidebar-link .verb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: center;
+  }
+  .verb-get    { background: rgba(62,207,142,0.12); color: #1b8a5a; }
+  .verb-post   { background: rgba(99,91,255,0.12); color: #4f46e5; }
+  .verb-delete { background: rgba(255,86,48,0.12); color: #c93824; }
+  .sidebar-group { margin-bottom: 4px; }
+  .sidebar-group-title {
+    font-weight: 600;
+    color: var(--text);
+    padding: 10px 24px 4px;
+    font-size: 13px;
+    letter-spacing: -0.005em;
+  }
+
+  /* ============ CONTENT ============ */
+  main.content {
+    padding: 48px 56px 120px;
+    max-width: var(--content-max);
+    min-width: 0;
+  }
+  main.content h1 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  main.content h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 64px;
+    margin-bottom: 8px;
+    letter-spacing: -0.015em;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  main.content h2.no-border { border-top: none; padding-top: 0; }
+  main.content h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-top: 44px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    letter-spacing: -0.01em;
+  }
+  main.content h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+  main.content p { color: var(--text-muted); margin-bottom: 14px; }
+  main.content p strong { color: var(--text); font-weight: 600; }
+  main.content a { color: var(--accent); text-decoration: none; }
+  main.content a:hover { text-decoration: underline; }
+  main.content ul, main.content ol { padding-left: 22px; margin-bottom: 14px; color: var(--text-muted); }
+  main.content li { margin-bottom: 4px; }
+
+  .lead { font-size: 16px; color: var(--text-muted); margin-bottom: 8px; }
+
+  /* inline code */
+  main.content code:not(pre code) {
+    font-size: 12.5px;
+    padding: 2px 5px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+  }
+
+  /* endpoint heading */
+  .endpoint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 14.5px;
+    color: var(--text);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin: 14px 0 22px;
+    word-break: break-all;
+  }
+  .verb-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .verb-tag.get { background: rgba(62,207,142,0.14); color: #1b8a5a; }
+  .verb-tag.post { background: rgba(99,91,255,0.14); color: #4f46e5; }
+  .verb-tag.delete { background: rgba(255,86,48,0.14); color: #c93824; }
+
+  /* parameter table */
+  .params {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0 24px;
+  }
+  .param {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .param:last-child { border-bottom: none; }
+  .param-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .param-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .param-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+    font-weight: 500;
+  }
+  .param-req {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .req-required { color: #c93824; background: rgba(255,86,48,0.10); }
+  .req-optional { color: #8898aa; }
+  .param-desc {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .param-desc code {
+    font-size: 12px;
+    padding: 1px 4px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+  }
+
+  /* notices */
+  .notice {
+    border-left: 3px solid var(--accent);
+    background: rgba(99,91,255,0.05);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 16px 0;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+  .notice strong { color: var(--text); }
+  .notice.warn { border-left-color: var(--orange); background: rgba(255,143,14,0.06); }
+  .notice.danger { border-left-color: var(--red); background: rgba(255,86,48,0.06); }
+
+  /* error code table */
+  table.errors {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  table.errors th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg-subtle);
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+  }
+  table.errors td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  table.errors tr:last-child td { border-bottom: none; }
+  table.errors td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  table.errors td:nth-child(2) {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .http-2 { color: #1b8a5a !important; }
+  .http-4 { color: #d97706 !important; }
+  .http-5 { color: #c93824 !important; }
+
+  /* ============ INLINE CODE BLOCKS ============ */
+  .code-block {
+    margin: 14px 0 22px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-code);
+    border: 1px solid #0a1126;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .code-block-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg-code-deep);
+    border-bottom: 1px solid var(--border-dark);
+    font-size: 11.5px;
+    color: #8aa5d0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .code-block-head .label { display: flex; align-items: center; gap: 8px; }
+  .code-block-head .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    display: inline-block;
+  }
+  .status-dot.req { background: #a5b4fc; }
+  .status-dot.res { background: #6ee7b7; }
+  .code-block-head .copy {
+    background: none; border: none; color: #8aa5d0;
+    cursor: pointer; padding: 4px 8px; font-size: 11px;
+    border-radius: 4px;
+    display: flex; align-items: center; gap: 4px;
+    font-family: inherit;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+  .code-block-head .copy:hover { background: rgba(255,255,255,0.06); color: #fff; }
+
+  pre.code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    padding: 14px 16px;
+    overflow-x: auto;
+    color: var(--text-code);
+    white-space: pre;
+    tab-size: 2;
+  }
+
+  /* syntax highlighting */
+  .tok-key { color: #a5b4fc; }
+  .tok-str { color: #6ee7b7; }
+  .tok-num { color: #fde68a; }
+  .tok-bool { color: #fbbf24; }
+  .tok-null { color: #fbbf24; }
+  .tok-comment { color: #6b7a99; font-style: italic; }
+  .tok-cmd { color: #f9a8d4; }
+  .tok-flag { color: #a5b4fc; }
+  .tok-url { color: #93c5fd; }
+
+  /* scrollbars */
+  aside.sidebar::-webkit-scrollbar { width: 8px; }
+  aside.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  pre.code::-webkit-scrollbar { height: 8px; }
+  pre.code::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+
+  /* hero */
+  .hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .hero .pill {
+    background: rgba(99,91,255,0.08);
+    border-color: rgba(99,91,255,0.2);
+    color: var(--accent);
+  }
+  .hero .pill-dot { background: var(--accent); box-shadow: 0 0 0 3px rgba(99,91,255,0.18); }
+
+  .keylist {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 16px 0 24px;
+  }
+  .keylist .kl-item {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 12px 14px;
+    background: var(--bg);
+    transition: border-color 120ms, transform 120ms;
+  }
+  .keylist .kl-item:hover { border-color: rgba(99,91,255,0.4); transform: translateY(-1px); }
+  .kl-item .kl-title { font-weight: 600; font-size: 13.5px; color: var(--text); margin-bottom: 3px; }
+  .kl-item .kl-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+  .kl-item a { color: inherit; display: block; }
+
+  .anchor {
+    display: inline-block;
+    margin-left: 6px;
+    color: var(--text-faint);
+    opacity: 0;
+    transition: opacity 120ms;
+    font-weight: 400;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  h2:hover .anchor, h3:hover .anchor { opacity: 1; }
+
+  .returns {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .returns-head {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .returns p { margin-bottom: 0; font-size: 13.5px; }
+
+  /* ============ TECH STACK / GITHUB ============ */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin: 14px 0 20px;
+  }
+  .stack-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .stack-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    display: grid; place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .stack-body { min-width: 0; }
+  .stack-name { font-weight: 600; font-size: 13.5px; color: var(--text); line-height: 1.3; }
+  .stack-role { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-top: 1px; }
+
+  .gh-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #0a2540 0%, #1a1f36 100%);
+    color: #f5f6f8;
+    border-radius: 10px;
+    text-decoration: none;
+    margin: 16px 0 8px;
+    transition: transform 120ms, box-shadow 120ms;
+    box-shadow: 0 1px 3px rgba(10,37,64,0.12);
+  }
+  .gh-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(10,37,64,0.25);
+    text-decoration: none;
+  }
+  .gh-card svg { flex-shrink: 0; }
+  .gh-card .gh-body { flex: 1; min-width: 0; }
+  .gh-card .gh-title { font-weight: 600; font-size: 14.5px; letter-spacing: -0.005em; }
+  .gh-card .gh-repo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #a5b4fc;
+    margin-top: 2px;
+  }
+  .gh-card .gh-arrow {
+    color: #8aa5d0;
+    font-size: 18px;
+    transition: transform 120ms;
+  }
+  .gh-card:hover .gh-arrow { transform: translateX(3px); color: #fff; }
+
+  /* ============ "BUILT WITH WEKA" BADGE ============ */
+  /* Used inline anywhere we describe the integration.
+     Per WEKA logo guidance the logo is kept small and never
+     functions as our primary brand identity. */
+  .built-with {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 11px 5px 6px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    line-height: 1;
+    transition: border-color 120ms, transform 120ms;
+  }
+  .built-with:hover { border-color: rgba(99,91,255,0.4); }
+  .built-with img {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: block;
+  }
+  .built-with .bw-label { color: var(--text); }
+
+  /* Integration / Overview section visual */
+  .integration-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 16px 0 24px;
+  }
+  .integration-card img.weka-logo {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .integration-card .ic-body { min-width: 0; }
+  .integration-card .ic-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .integration-card .ic-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ============ FOOTER ============ */
+  footer.site-footer {
+    grid-column: 1 / -1;
+    margin-top: 64px;
+    padding: 32px 56px 48px;
+    background: var(--bg-subtle);
+    border-top: 1px solid var(--border);
+  }
+  .footer-inner {
+    max-width: var(--content-max);
+    font-size: 12.5px;
+    color: var(--text-faint);
+    line-height: 1.6;
+  }
+  .footer-section { margin-bottom: 14px; }
+  .footer-section:last-child { margin-bottom: 0; }
+  .footer-section strong { color: var(--text-muted); font-weight: 600; }
+  .footer-disclaimer {
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 12.5px;
+  }
+  .footer-attrib {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .footer-attrib img {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+  }
+  footer.site-footer a {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+  }
+  footer.site-footer a:hover { color: var(--accent); }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    :root { --sidebar-width: 0; }
+    .layout { grid-template-columns: 1fr; }
+    aside.sidebar { display: none; }
+    main.content { padding: 32px 20px 80px; }
+    .topbar-nav { display: none; }
+    .search { width: 140px; }
+    .keylist { grid-template-columns: 1fr; }
+    footer.site-footer { padding: 28px 20px 40px; }
+    .integration-card { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#" class="brand">
+    <span class="brand-mark">W</span>
+    <span>WEKA API Server</span>
+    <span class="brand-divider">/</span>
+    <span class="brand-subtitle">Documentation</span>
+  </a>
+  <nav class="topbar-nav">
+    <a href="#introduction" class="active">Overview</a>
+    <a href="#getting-started">Getting started</a>
+    <a href="#health">API</a>
+    <a href="#walkthrough">Examples</a>
+    <a href="#legal">Legal</a>
+  </nav>
+  <div class="topbar-actions">
+    <input class="search" placeholder="Search the docs…" type="search">
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ============ LEFT SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Introduction</div>
+    <a class="sidebar-link active" href="#introduction">Overview</a>
+    <a class="sidebar-link" href="#getting-started">Getting started</a>
+    <a class="sidebar-link" href="#authentication">Authentication</a>
+    <a class="sidebar-link" href="#errors">Errors</a>
+    <a class="sidebar-link" href="#walkthrough">End-to-end walkthrough</a>
+
+    <div class="sidebar-title">Core API</div>
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Health</div>
+      <a class="sidebar-link" href="#health"><span class="verb verb-get">GET</span> /health</a>
+      <a class="sidebar-link" href="#algorithms"><span class="verb verb-get">GET</span> /algorithms</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Datasets</div>
+      <a class="sidebar-link" href="#datasets-upload"><span class="verb verb-post">POST</span> /datasets</a>
+      <a class="sidebar-link" href="#datasets-list"><span class="verb verb-get">GET</span> /datasets</a>
+      <a class="sidebar-link" href="#datasets-get"><span class="verb verb-get">GET</span> /datasets/:name</a>
+      <a class="sidebar-link" href="#datasets-delete"><span class="verb verb-delete">DEL</span> /datasets/:name</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Training &amp; inference</div>
+      <a class="sidebar-link" href="#train"><span class="verb verb-post">POST</span> /train</a>
+      <a class="sidebar-link" href="#predict"><span class="verb verb-post">POST</span> /predict</a>
+      <a class="sidebar-link" href="#evaluate"><span class="verb verb-post">POST</span> /evaluate</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Models</div>
+      <a class="sidebar-link" href="#models-list"><span class="verb verb-get">GET</span> /models</a>
+      <a class="sidebar-link" href="#models-get"><span class="verb verb-get">GET</span> /models/:name</a>
+      <a class="sidebar-link" href="#models-delete"><span class="verb verb-delete">DEL</span> /models/:name</a>
+      <a class="sidebar-link" href="#models-drawable-type"><span class="verb verb-get">GET</span> /drawable-type</a>
+      <a class="sidebar-link" href="#models-tree"><span class="verb verb-get">GET</span> /models/:name/tree</a>
+      <a class="sidebar-link" href="#models-graph"><span class="verb verb-get">GET</span> /models/:name/graph</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">EDA</div>
+      <a class="sidebar-link" href="#attribute-stats"><span class="verb verb-get">GET</span> /attribute-stats</a>
+      <a class="sidebar-link" href="#summary"><span class="verb verb-get">GET</span> /summary</a>
+      <a class="sidebar-link" href="#histogram"><span class="verb verb-get">GET</span> /histogram</a>
+      <a class="sidebar-link" href="#scatter"><span class="verb verb-get">GET</span> /scatter</a>
+      <a class="sidebar-link" href="#scatter-matrix"><span class="verb verb-get">GET</span> /scatter-matrix</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Filters &amp; transform</div>
+      <a class="sidebar-link" href="#filters"><span class="verb verb-get">GET</span> /filters</a>
+      <a class="sidebar-link" href="#filters-metadata"><span class="verb verb-get">GET</span> /filters/metadata</a>
+      <a class="sidebar-link" href="#transform"><span class="verb verb-post">POST</span> /transform</a>
+      <a class="sidebar-link" href="#transform-preview"><span class="verb verb-post">POST</span> /transform/preview</a>
+    </div>
+
+    <div class="sidebar-group">
+      <div class="sidebar-group-title">Diagnostics</div>
+      <a class="sidebar-link" href="#diag-errors"><span class="verb verb-post">POST</span> /diagnostics/errors</a>
+      <a class="sidebar-link" href="#diag-threshold"><span class="verb verb-post">POST</span> /threshold-curve</a>
+      <a class="sidebar-link" href="#diag-margin"><span class="verb verb-post">POST</span> /margin-curve</a>
+      <a class="sidebar-link" href="#diag-cost"><span class="verb verb-post">POST</span> /cost-curve</a>
+      <a class="sidebar-link" href="#diag-calibration"><span class="verb verb-post">POST</span> /calibration</a>
+    </div>
+
+    <div class="sidebar-title">Reference</div>
+    <a class="sidebar-link" href="#legal">Legal &amp; attribution</a>
+  </aside>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="content">
+
+    <section id="introduction">
+      <div class="hero">
+        <h1 style="margin:0;">WEKA API Server Documentation</h1>
+      </div>
+      <p class="lead">
+        A REST API layer for running machine learning workflows using <a href="https://www.cs.waikato.ac.nz/ml/weka/" target="_blank">WEKA</a>. The server exposes endpoints for dataset management, classifier training, prediction, evaluation, exploratory data analysis, leakage-safe preprocessing, and post-training diagnostics — all over plain JSON.
+      </p>
+
+    </section>
+
+    <section id="overview">
+      <h2 class="no-border">Overview <a href="#overview" class="anchor">#</a></h2>
+      <p>
+        The WEKA API Server wraps the open-source <strong>WEKA</strong> machine learning library in a small HTTP service so that any client — a notebook, a frontend, a CI job — can train, evaluate, and introspect classifiers without touching the JVM. The API is organised around REST and uses predictable, resource-oriented URLs that return JSON-encoded responses.
+      </p>
+
+      <div class="integration-card">
+        <img class="weka-logo" src="weka_logo.png" alt="WEKA logo" />
+        <div class="ic-body">
+          <div class="ic-title">Powered by WEKA</div>
+          <div class="ic-desc">Every endpoint delegates to the WEKA library — classifier training, filter chains, EDA statistics, and diagnostic curves are all computed by WEKA itself. This server is just a thin HTTP layer with input validation, persistence, and JSON serialisation around it.</div>
+        </div>
+      </div>
+
+      <p>The server is intentionally small in scope:</p>
+      <ul>
+        <li><strong>Single-user, local development.</strong> Binds to <code>127.0.0.1</code>, no authentication, no multi-tenant isolation.</li>
+        <li><strong>Filesystem persistence.</strong> Datasets land in <code>./data</code> and serialized models in <code>./models</code> via Docker bind mounts — restarts preserve state.</li>
+        <li><strong>Convention over configuration.</strong> The last attribute of an uploaded dataset is treated as the class by default; all classifier and filter classnames are allowlisted to <code>weka.classifiers.*</code> / <code>weka.filters.*</code>.</li>
+      </ul>
+
+      <h4>Built with</h4>
+      <p>A small, conventional Java stack — chosen for fast startup, minimal ceremony, and full access to the WEKA classpath at runtime.</p>
+      <div class="stack-grid">
+        <div class="stack-item">
+          <div class="stack-icon">Jv</div>
+          <div class="stack-body">
+            <div class="stack-name">Javalin</div>
+            <div class="stack-role">HTTP framework &amp; routing</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">W</div>
+          <div class="stack-body">
+            <div class="stack-name">WEKA</div>
+            <div class="stack-role">Machine learning library</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">{}</div>
+          <div class="stack-body">
+            <div class="stack-name">Jackson</div>
+            <div class="stack-role">JSON serialisation</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">17</div>
+          <div class="stack-body">
+            <div class="stack-name">Java 17 / Maven</div>
+            <div class="stack-role">Build &amp; runtime</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">D</div>
+          <div class="stack-body">
+            <div class="stack-name">Docker Compose</div>
+            <div class="stack-role">Container orchestration</div>
+          </div>
+        </div>
+      </div>
+
+      <a class="gh-card" href="https://github.com/iamademar/weka-api" target="_blank" rel="noopener">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#f5f6f8" aria-hidden="true">
+          <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.02c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.13v3.16c0 .3.21.67.8.55C20.21 21.38 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
+        </svg>
+        <div class="gh-body">
+          <div class="gh-title">View on GitHub</div>
+          <div class="gh-repo">iamademar/weka-api</div>
+        </div>
+        <span class="gh-arrow">→</span>
+      </a>
+
+      <div class="keylist">
+        <a class="kl-item" href="#datasets-upload">
+          <div class="kl-title">Datasets</div>
+          <div class="kl-desc">Upload ARFF / CSV files. The last attribute is the class by convention.</div>
+        </a>
+        <a class="kl-item" href="#train">
+          <div class="kl-title">Train</div>
+          <div class="kl-desc">Fit any WEKA classifier on an uploaded dataset and persist it to disk.</div>
+        </a>
+        <a class="kl-item" href="#predict">
+          <div class="kl-title">Predict</div>
+          <div class="kl-desc">Score new instances against a trained model with full class distributions.</div>
+        </a>
+        <a class="kl-item" href="#evaluate">
+          <div class="kl-title">Evaluate</div>
+          <div class="kl-desc">Run a trained model against a dataset and return accuracy, kappa, F1, and a confusion matrix.</div>
+        </a>
+        <a class="kl-item" href="#diag-errors">
+          <div class="kl-title">Diagnostics</div>
+          <div class="kl-desc">ROC, margin, cost curves, calibration plots, and per-instance error visualisation.</div>
+        </a>
+        <a class="kl-item" href="#transform">
+          <div class="kl-title">Transform</div>
+          <div class="kl-desc">Apply leakage-safe filter chains to datasets and persist the transformed result.</div>
+        </a>
+      </div>
+    </section>
+
+    <section id="getting-started">
+      <h2>Getting started <a href="#getting-started" class="anchor">#</a></h2>
+      <p>The fastest path from clone to a live API is via Docker Compose. The first build downloads the WEKA library and its dependencies into the local Maven cache; subsequent builds reuse it.</p>
+
+      <h4>Prerequisites</h4>
+      <ul>
+        <li><strong>Docker Desktop</strong> (or any Docker engine) with <strong>Compose v2</strong> (<code>docker compose ...</code>).</li>
+        <li>About 1&nbsp;GB free disk for the first image build.</li>
+        <li>Port <code>7070</code> free on <code>127.0.0.1</code>.</li>
+      </ul>
+
+      <h4>1. Start the server</h4>
+      <p>From the repository root (the directory containing <code>compose.yaml</code>):</p>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label">Shell</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-comment"># build the image and start the container</span>
+<span class="tok-cmd">docker</span> compose up --build
+
+<span class="tok-comment"># or detached</span>
+<span class="tok-cmd">docker</span> compose up --build -d</pre>
+      </div>
+
+      <h4>2. Verify it's up</h4>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/health</span>
+<span class="tok-comment"># → {"status":"ok","wekaVersion":"3.9.6"}</span></pre>
+      </div>
+
+      <h4>3. Configuration</h4>
+      <p>All environment variables have defaults — <code>docker compose up</code> works without any <code>.env</code> file.</p>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">PORT</span><span class="param-type">integer</span><span class="param-req req-optional">default: 7070</span></div>
+          <div class="param-desc">HTTP port the server binds to.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">MODELS_DIR</span><span class="param-type">path</span><span class="param-req req-optional">default: /app/models</span></div>
+          <div class="param-desc">Where serialized <code>.model</code> files live.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">DATA_DIR</span><span class="param-type">path</span><span class="param-req req-optional">default: /app/data</span></div>
+          <div class="param-desc">Where uploaded ARFF/CSV files live.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">MAX_UPLOAD_MB</span><span class="param-type">integer</span><span class="param-req req-optional">default: 100</span></div>
+          <div class="param-desc">Reject dataset uploads above this size.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">LOG_LEVEL</span><span class="param-type">string</span><span class="param-req req-optional">default: INFO</span></div>
+          <div class="param-desc">Root Logback level (<code>DEBUG</code>, <code>INFO</code>, <code>WARN</code>, <code>ERROR</code>).</div>
+        </div>
+      </div>
+
+      <h4>Example request</h4>
+      <p>A minimal end-to-end smoke test — upload the sample dataset, train a classifier, get a prediction back:</p>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Sample HTTP request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/predict</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{
+    "model": "iris-j48",
+    "instances": [
+      {"sepallength":5.1,"sepalwidth":3.5,"petallength":1.4,"petalwidth":0.2}
+    ]
+  }'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK · application/json</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>,
+  <span class="tok-key">"predictions"</span>: [
+    { <span class="tok-key">"predictedClass"</span>: <span class="tok-str">"Iris-setosa"</span>,
+      <span class="tok-key">"distribution"</span>: {
+        <span class="tok-key">"Iris-setosa"</span>: <span class="tok-num">1.0</span>,
+        <span class="tok-key">"Iris-versicolor"</span>: <span class="tok-num">0.0</span>,
+        <span class="tok-key">"Iris-virginica"</span>: <span class="tok-num">0.0</span>
+      } }
+  ]
+}</pre>
+      </div>
+
+      <p>All requests are <code>application/json</code> unless stated otherwise. Errors return <code>{ "error": "...", "code": "..." }</code>; see the <a href="#errors">Errors</a> section for the full code table.</p>
+    </section>
+
+    <section id="authentication">
+      <h2>Authentication <a href="#authentication" class="anchor">#</a></h2>
+      <p>
+        The WEKA API Server is a <strong>single-user local development</strong> service and ships with <strong>no authentication</strong>. The Docker container binds explicitly to <code>127.0.0.1</code> so it is not reachable from outside the host machine. Do not expose the service to the public internet without first adding a reverse proxy with TLS termination and an auth layer.
+      </p>
+      <div class="notice warn">
+        <strong>Heads up.</strong> User-supplied classnames are validated against an allowlist: classifiers must start with <code>weka.classifiers.</code>, filters with <code>weka.filters.</code>. Filenames are sanitised against <code>/</code>, <code>\</code>, and <code>..</code> path-traversal patterns.
+      </div>
+    </section>
+
+    <section id="errors">
+      <h2>Errors <a href="#errors" class="anchor">#</a></h2>
+      <p>The API uses conventional HTTP response codes. All error responses share the shape <code>{ "error": "...", "code": "..." }</code>. The <code>code</code> field is a stable machine-readable identifier from the table below.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>Example error response</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"error"</span>: <span class="tok-str">"dataset 'foo' not found"</span>,
+  <span class="tok-key">"code"</span>:  <span class="tok-str">"DATASET_NOT_FOUND"</span>
+}</pre>
+      </div>
+
+      <table class="errors">
+        <thead><tr><th>Code</th><th>HTTP</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td>DATASET_NOT_FOUND</td><td class="http-4">404</td><td>No file at <code>DATA_DIR/{name}.{ext}</code></td></tr>
+          <tr><td>MODEL_NOT_FOUND</td><td class="http-4">404</td><td>No file at <code>MODELS_DIR/{name}.model</code></td></tr>
+          <tr><td>INVALID_NAME</td><td class="http-4">400</td><td>Name contains <code>/</code>, <code>\</code>, or <code>..</code></td></tr>
+          <tr><td>INVALID_ALGORITHM</td><td class="http-4">400</td><td>Classname outside <code>weka.classifiers.</code> allowlist</td></tr>
+          <tr><td>INVALID_FORMAT</td><td class="http-4">400</td><td>Unsupported file extension</td></tr>
+          <tr><td>UPLOAD_TOO_LARGE</td><td class="http-4">413</td><td>Exceeds <code>MAX_UPLOAD_MB</code></td></tr>
+          <tr><td>TRAINING_FAILED</td><td class="http-4">422</td><td>WEKA threw during <code>buildClassifier</code></td></tr>
+          <tr><td>PREDICTION_FAILED</td><td class="http-4">422</td><td>WEKA threw during prediction</td></tr>
+          <tr><td>EVALUATION_FAILED</td><td class="http-4">422</td><td>WEKA threw during evaluation</td></tr>
+          <tr><td>INVALID_FILTER</td><td class="http-4">400</td><td>Filter outside <code>weka.filters.</code> allowlist or unknown class</td></tr>
+          <tr><td>TRANSFORM_FAILED</td><td class="http-4">422</td><td>WEKA threw applying a filter chain</td></tr>
+          <tr><td>INVALID_ATTRIBUTE</td><td class="http-4">400</td><td>Attribute name not on dataset</td></tr>
+          <tr><td>INVALID_CLASS_VALUE</td><td class="http-4">400</td><td>Class value not in the class attribute's domain</td></tr>
+          <tr><td>NOT_DRAWABLE</td><td class="http-4">400</td><td>Classifier doesn't implement Drawable / wrong graph type</td></tr>
+          <tr><td>NOT_NOMINAL_CLASS</td><td class="http-4">400</td><td>Diagnostic requires a nominal class but the model's class is numeric</td></tr>
+          <tr><td>NOT_NUMERIC_CLASS</td><td class="http-4">400</td><td>Reserved for future numeric-class diagnostics</td></tr>
+          <tr><td>BAD_REQUEST</td><td class="http-4">400</td><td>Malformed JSON or missing required fields</td></tr>
+          <tr><td>INTERNAL_ERROR</td><td class="http-5">500</td><td>Anything uncaught (also logged with full stacktrace)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ====== HEALTH ====== -->
+    <section id="health">
+      <h2>Health <a href="#health" class="anchor">#</a></h2>
+      <p>Liveness probe and WEKA library version. Use this to verify the service is up and ready to accept requests.</p>
+
+      <h3><span class="verb-tag get">GET</span> /health</h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/health</div>
+      <p>Returns a small status payload with the bundled WEKA library version. No side effects.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/health</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK · application/json</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"status"</span>:       <span class="tok-str">"ok"</span>,
+  <span class="tok-key">"wekaVersion"</span>: <span class="tok-str">"3.9.6"</span>
+}</pre>
+      </div>
+    </section>
+
+    <!-- ====== ALGORITHMS ====== -->
+    <section id="algorithms">
+      <h3><span class="verb-tag get">GET</span> /algorithms <a href="#algorithms" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/algorithms</div>
+      <p>Lists WEKA classifier classnames grouped by family — <code>trees</code>, <code>bayes</code>, <code>functions</code>, <code>lazy</code>, <code>rules</code>, <code>meta</code>, and <code>misc</code>. The result is cached for the process lifetime.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/algorithms</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"classifiers"</span>: {
+    <span class="tok-key">"bayes"</span>:     [<span class="tok-str">"weka.classifiers.bayes.NaiveBayes"</span>],
+    <span class="tok-key">"functions"</span>: [<span class="tok-str">"weka.classifiers.functions.Logistic"</span>],
+    <span class="tok-key">"lazy"</span>:      [<span class="tok-str">"weka.classifiers.lazy.IBk"</span>],
+    <span class="tok-key">"meta"</span>:      [<span class="tok-str">"weka.classifiers.meta.AdaBoostM1"</span>],
+    <span class="tok-key">"rules"</span>:     [<span class="tok-str">"weka.classifiers.rules.JRip"</span>],
+    <span class="tok-key">"trees"</span>:     [<span class="tok-str">"weka.classifiers.trees.J48"</span>,
+                    <span class="tok-str">"weka.classifiers.trees.RandomForest"</span>]
+  }
+}</pre>
+      </div>
+
+      <div class="notice">
+        <strong>Fallback behaviour.</strong> If WEKA's <code>ClassDiscovery</code> can't enumerate the classpath at runtime, the controller falls back to a curated set of common classifiers. All classifiers on the classpath remain usable via <code>/train</code> regardless of whether they appear in the listing.
+      </div>
+    </section>
+
+    <!-- ====== DATASETS ====== -->
+    <section id="datasets-upload">
+      <h2>Datasets <a href="#datasets-upload" class="anchor">#</a></h2>
+      <p>The dataset resource represents an uploaded ARFF or CSV file persisted on disk. Datasets are referenced by name everywhere else in the API. The <strong>last attribute is treated as the class</strong> by convention.</p>
+
+      <h3><span class="verb-tag post">POST</span> /datasets — Upload a dataset</h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/datasets</div>
+      <p>Uploads an ARFF or CSV file. The request body must be <code>multipart/form-data</code>. On success returns <code>201 Created</code>.</p>
+
+      <h4>Body parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head">
+            <span class="param-name">file</span>
+            <span class="param-type">file</span>
+            <span class="param-req req-required">required</span>
+          </div>
+          <div class="param-desc">An ARFF (<code>.arff</code>) or CSV (<code>.csv</code>) file. Subject to the <code>MAX_UPLOAD_MB</code> limit (default 100&nbsp;MB).</div>
+        </div>
+        <div class="param">
+          <div class="param-head">
+            <span class="param-name">name</span>
+            <span class="param-type">string</span>
+            <span class="param-req req-optional">optional</span>
+          </div>
+          <div class="param-desc">Stored filename base (no extension). Defaults to the uploaded filename minus its extension. Must not contain <code>/</code>, <code>\</code>, or <code>..</code>.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -F file=@iris.arff \
+     -F name=iris \
+     <span class="tok-url">http://localhost:7070/datasets</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>201 Created</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>:           <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"path"</span>:           <span class="tok-str">"iris.arff"</span>,
+  <span class="tok-key">"format"</span>:         <span class="tok-str">"arff"</span>,
+  <span class="tok-key">"numInstances"</span>:   <span class="tok-num">150</span>,
+  <span class="tok-key">"numAttributes"</span>:  <span class="tok-num">5</span>,
+  <span class="tok-key">"classAttribute"</span>: <span class="tok-str">"class"</span>
+}</pre>
+      </div>
+    </section>
+
+    <section id="datasets-list">
+      <h3><span class="verb-tag get">GET</span> /datasets — List <a href="#datasets-list" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets</div>
+      <p>Returns every dataset currently on disk, with its on-disk size. The listing has no pagination — the local-dev usage envelope assumes a handful of datasets, not hundreds.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/datasets</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"datasets"</span>: [
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"iris"</span>, <span class="tok-key">"format"</span>: <span class="tok-str">"arff"</span>, <span class="tok-key">"sizeBytes"</span>: <span class="tok-num">7045</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="datasets-get">
+      <h3><span class="verb-tag get">GET</span> /datasets/:name — Metadata <a href="#datasets-get" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets/{name}</div>
+      <p>Returns full metadata about the named dataset — every attribute, its type, and (for nominal attributes) the full domain of legal values. The class attribute is identified explicitly in the response.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/datasets/iris</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"format"</span>: <span class="tok-str">"arff"</span>,
+  <span class="tok-key">"numInstances"</span>: <span class="tok-num">150</span>,
+  <span class="tok-key">"attributes"</span>: [
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"sepallength"</span>, <span class="tok-key">"type"</span>: <span class="tok-str">"numeric"</span> },
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"sepalwidth"</span>,  <span class="tok-key">"type"</span>: <span class="tok-str">"numeric"</span> },
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"petallength"</span>, <span class="tok-key">"type"</span>: <span class="tok-str">"numeric"</span> },
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"petalwidth"</span>,  <span class="tok-key">"type"</span>: <span class="tok-str">"numeric"</span> },
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"class"</span>,
+      <span class="tok-key">"type"</span>: <span class="tok-str">"nominal"</span>,
+      <span class="tok-key">"values"</span>: [<span class="tok-str">"Iris-setosa"</span>, <span class="tok-str">"Iris-versicolor"</span>, <span class="tok-str">"Iris-virginica"</span>] }
+  ],
+  <span class="tok-key">"classAttribute"</span>: <span class="tok-str">"class"</span>
+}</pre>
+      </div>
+    </section>
+
+    <section id="datasets-delete">
+      <h3><span class="verb-tag delete">DELETE</span> /datasets/:name <a href="#datasets-delete" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag delete">DELETE</span> http://localhost:7070/datasets/{name}</div>
+      <p>Removes the dataset from disk. Returns <code>204 No Content</code> on success. Models trained against the dataset are unaffected — they keep an internal copy of the relevant header information.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X DELETE <span class="tok-url">http://localhost:7070/datasets/iris</span>
+<span class="tok-comment"># 204 No Content</span></pre>
+      </div>
+    </section>
+
+    <!-- ====== TRAIN ====== -->
+    <section id="train">
+      <h2>Training &amp; inference <a href="#train" class="anchor">#</a></h2>
+      <p>The training endpoint fits any classifier from WEKA's <code>weka.classifiers.*</code> namespace against an uploaded dataset and persists the serialized model to <code>MODELS_DIR/{modelName}.model</code>. The dataset header is saved alongside it so prediction is possible later even if the source dataset is deleted.</p>
+
+      <h3><span class="verb-tag post">POST</span> /train — Train a classifier</h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/train</div>
+
+      <h4>Body parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">dataset</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Name of an uploaded dataset.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">algorithm</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Fully-qualified WEKA classname; must start with <code>weka.classifiers.</code> (allowlist enforced).</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">modelName</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Filename to persist to (no extension, no path separators).</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">options</span><span class="param-type">array of strings</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">WEKA CLI-style options as an array — for example, <code>["-C","0.25","-M","2"]</code> for J48's confidence factor and minimum number of instances per leaf.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">classIndex</span><span class="param-type">integer</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Zero-based attribute index. Default <code>-1</code>, meaning use the last attribute.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">filters</span><span class="param-type">array of objects</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Embedded filter chain — wraps the classifier in <code>FilteredClassifier</code>. Each element is <code>{ "filter": "&lt;fqn&gt;", "options": [...] }</code>. Required when using supervised filters to avoid class-info leakage. See the <a href="#transform">leakage-safe workflow</a>.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/train</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{
+    "dataset":   "iris",
+    "algorithm": "weka.classifiers.trees.J48",
+    "options":   ["-C","0.25","-M","2"],
+    "modelName": "iris-j48"
+  }'</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>201 Created</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"modelName"</span>:      <span class="tok-str">"iris-j48"</span>,
+  <span class="tok-key">"algorithm"</span>:      <span class="tok-str">"weka.classifiers.trees.J48"</span>,
+  <span class="tok-key">"trainedOn"</span>:      <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"trainingTimeMs"</span>: <span class="tok-num">142</span>,
+  <span class="tok-key">"summary"</span>:        <span class="tok-str">"J48 pruned tree\n------------------\n..."</span>
+}</pre>
+      </div>
+
+      <div class="returns">
+        <div class="returns-head">Returns</div>
+        <p>The persisted model name, the algorithm classname, training dataset name, training duration in ms, and WEKA's textual <code>summary</code> of the fitted model.</p>
+      </div>
+    </section>
+
+    <!-- ====== PREDICT ====== -->
+    <section id="predict">
+      <h3><span class="verb-tag post">POST</span> /predict — Score new instances <a href="#predict" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/predict</div>
+      <p>Runs a previously trained model against a batch of instances. Each instance is a plain JSON object mapping attribute name to value; missing keys are treated as missing values by WEKA.</p>
+
+      <h4>Body parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">model</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Name of a trained model.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">instances</span><span class="param-type">array of objects</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Non-empty array. Each object maps attribute name → value. Missing keys are treated as missing values.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/predict</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{
+    "model": "iris-j48",
+    "instances": [
+      {"sepallength":5.1,"sepalwidth":3.5,"petallength":1.4,"petalwidth":0.2},
+      {"sepallength":6.7,"sepalwidth":3.0,"petallength":5.2,"petalwidth":2.3}
+    ]
+  }'</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>,
+  <span class="tok-key">"predictions"</span>: [
+    { <span class="tok-key">"predictedClass"</span>: <span class="tok-str">"Iris-setosa"</span>,
+      <span class="tok-key">"distribution"</span>: {
+        <span class="tok-key">"Iris-setosa"</span>: <span class="tok-num">1.0</span>, <span class="tok-key">"Iris-versicolor"</span>: <span class="tok-num">0.0</span>, <span class="tok-key">"Iris-virginica"</span>: <span class="tok-num">0.0</span>
+      } },
+    { <span class="tok-key">"predictedClass"</span>: <span class="tok-str">"Iris-virginica"</span>,
+      <span class="tok-key">"distribution"</span>: {
+        <span class="tok-key">"Iris-setosa"</span>: <span class="tok-num">0.0</span>, <span class="tok-key">"Iris-versicolor"</span>: <span class="tok-num">0.02</span>, <span class="tok-key">"Iris-virginica"</span>: <span class="tok-num">0.98</span>
+      } }
+  ]
+}</pre>
+      </div>
+
+      <div class="returns">
+        <div class="returns-head">Returns</div>
+        <p>For a <strong>nominal</strong> class problem, each prediction includes the <code>predictedClass</code> label and a full <code>distribution</code> over class labels. For a <strong>numeric</strong> class, <code>distribution</code> is omitted and <code>predictedClass</code> is the numeric value rendered as a string.</p>
+      </div>
+    </section>
+
+    <!-- ====== EVALUATE ====== -->
+    <section id="evaluate">
+      <h3><span class="verb-tag post">POST</span> /evaluate — Score against a dataset <a href="#evaluate" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/evaluate</div>
+      <p>Evaluates a trained model against an arbitrary dataset and returns standard classification metrics — accuracy, Cohen's kappa, weighted F1, and a confusion matrix — plus WEKA's full textual summary.</p>
+
+      <h4>Body parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">model</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Trained model name.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">dataset</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Test dataset name. The class index is taken from the model's saved header.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/evaluate</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris"}'</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>:            <span class="tok-str">"iris-j48"</span>,
+  <span class="tok-key">"dataset"</span>:          <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"numInstances"</span>:     <span class="tok-num">150</span>,
+  <span class="tok-key">"correct"</span>:          <span class="tok-num">147</span>,
+  <span class="tok-key">"incorrect"</span>:        <span class="tok-num">3</span>,
+  <span class="tok-key">"accuracy"</span>:         <span class="tok-num">0.98</span>,
+  <span class="tok-key">"kappa"</span>:            <span class="tok-num">0.97</span>,
+  <span class="tok-key">"weightedFMeasure"</span>: <span class="tok-num">0.98</span>,
+  <span class="tok-key">"confusionMatrix"</span>:  [[<span class="tok-num">50</span>,<span class="tok-num">0</span>,<span class="tok-num">0</span>],[<span class="tok-num">0</span>,<span class="tok-num">49</span>,<span class="tok-num">1</span>],[<span class="tok-num">0</span>,<span class="tok-num">2</span>,<span class="tok-num">48</span>]],
+  <span class="tok-key">"classLabels"</span>:     [<span class="tok-str">"Iris-setosa"</span>, <span class="tok-str">"Iris-versicolor"</span>, <span class="tok-str">"Iris-virginica"</span>]
+}</pre>
+      </div>
+    </section>
+
+    <!-- ====== MODELS ====== -->
+    <section id="models-list">
+      <h2>Models <a href="#models-list" class="anchor">#</a></h2>
+      <p>Trained models are persisted as <code>.model</code> files alongside a <code>.header</code> file that captures the dataset structure they were fit against. Models can be listed, fetched for metadata, deleted, or interrogated for their internal structure when applicable.</p>
+
+      <h3><span class="verb-tag get">GET</span> /models — List</h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/models</div>
+      <p>Returns every trained model on disk with its serialized size in bytes.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/models</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"models"</span>: [
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"sizeBytes"</span>: <span class="tok-num">8123</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="models-get">
+      <h3><span class="verb-tag get">GET</span> /models/:name — Metadata <a href="#models-get" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/models/{name}</div>
+      <p>Returns the model's algorithm classname and WEKA's textual <code>summary</code> — useful for displaying the fitted tree, the learned coefficients, or whatever else the underlying classifier chooses to render.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/models/iris-j48</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>:      <span class="tok-str">"iris-j48"</span>,
+  <span class="tok-key">"algorithm"</span>: <span class="tok-str">"weka.classifiers.trees.J48"</span>,
+  <span class="tok-key">"summary"</span>:   <span class="tok-str">"J48 pruned tree\n------------------\n..."</span>
+}</pre>
+      </div>
+    </section>
+
+    <section id="models-delete">
+      <h3><span class="verb-tag delete">DELETE</span> /models/:name <a href="#models-delete" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag delete">DELETE</span> http://localhost:7070/models/{name}</div>
+      <p>Deletes the <code>.model</code> and <code>.header</code> files from disk and invalidates the in-memory cache entry. Returns <code>204 No Content</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X DELETE <span class="tok-url">http://localhost:7070/models/iris-j48</span>
+<span class="tok-comment"># 204 No Content</span></pre>
+      </div>
+    </section>
+
+    <section id="models-drawable-type">
+      <h3><span class="verb-tag get">GET</span> /models/:name/drawable-type <a href="#models-drawable-type" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/models/{name}/drawable-type</div>
+      <p>Returns a single field, <code>type</code>, indicating which structural endpoint is supported for this classifier — one of <code>"tree"</code>, <code>"graph"</code>, <code>"newick"</code>, or <code>"none"</code>. Use this to decide whether to render a tree diagram or a Bayes net.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/models/iris-j48/drawable-type</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{ <span class="tok-key">"name"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"type"</span>: <span class="tok-str">"tree"</span> }</pre>
+      </div>
+    </section>
+
+    <section id="models-tree">
+      <h3><span class="verb-tag get">GET</span> /models/:name/tree <a href="#models-tree" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/models/{name}/tree</div>
+      <p>Returns the classifier's tree in Graphviz DOT format. Supported for tree-based classifiers including <code>J48</code>, <code>RandomTree</code>, <code>REPTree</code>, <code>M5P</code>, <code>LMT</code>, and <code>HoeffdingTree</code>. Returns <code>400 NOT_DRAWABLE</code> if the classifier isn't a tree.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/models/iris-j48/tree</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>:   <span class="tok-str">"iris-j48"</span>,
+  <span class="tok-key">"type"</span>:   <span class="tok-str">"tree"</span>,
+  <span class="tok-key">"format"</span>: <span class="tok-str">"dot"</span>,
+  <span class="tok-key">"graph"</span>:  <span class="tok-str">"digraph J48Tree {\nN0 [label=\"petalwidth\"]\n..."</span>
+}</pre>
+      </div>
+    </section>
+
+    <section id="models-graph">
+      <h3><span class="verb-tag get">GET</span> /models/:name/graph <a href="#models-graph" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/models/{name}/graph</div>
+      <p>Same response shape as <code>/tree</code>, but for Bayes-net classifiers (<code>weka.classifiers.bayes.BayesNet</code>).</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/models/iris-bn/graph</span></pre>
+      </div>
+    </section>
+
+    <!-- ====== EDA ====== -->
+    <section id="attribute-stats">
+      <h2>EDA / data exploration <a href="#attribute-stats" class="anchor">#</a></h2>
+      <p>All five EDA endpoints take a dataset name in the path and <strong>never mutate state</strong>. They share a common sampling convention: pass <code>sample</code> (max 5000, default 500) and <code>seed</code> (default 42) to control the random shuffle used for scatter-style endpoints.</p>
+
+      <h3><span class="verb-tag get">GET</span> /datasets/:name/attribute-stats</h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets/{name}/attribute-stats?attribute=X</div>
+      <p>Per-attribute summary using WEKA's <code>AttributeStats</code>. For numeric attributes returns min/max/mean/stdDev/sum; for nominal attributes returns the full value-count map.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-str">'http://localhost:7070/datasets/iris/attribute-stats?attribute=petallength'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK · numeric attribute</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>: <span class="tok-str">"petallength"</span>,
+  <span class="tok-key">"type"</span>: <span class="tok-str">"numeric"</span>,
+  <span class="tok-key">"count"</span>: <span class="tok-num">150</span>, <span class="tok-key">"missing"</span>: <span class="tok-num">0</span>, <span class="tok-key">"distinct"</span>: <span class="tok-num">43</span>, <span class="tok-key">"unique"</span>: <span class="tok-num">2</span>,
+  <span class="tok-key">"numeric"</span>: {
+    <span class="tok-key">"min"</span>: <span class="tok-num">1.0</span>, <span class="tok-key">"max"</span>: <span class="tok-num">6.9</span>,
+    <span class="tok-key">"mean"</span>: <span class="tok-num">3.7587</span>, <span class="tok-key">"stdDev"</span>: <span class="tok-num">1.7644</span>, <span class="tok-key">"sum"</span>: <span class="tok-num">563.8</span>
+  }
+}</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK · nominal attribute</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>: <span class="tok-str">"class"</span>,
+  <span class="tok-key">"type"</span>: <span class="tok-str">"nominal"</span>,
+  <span class="tok-key">"count"</span>: <span class="tok-num">150</span>, <span class="tok-key">"missing"</span>: <span class="tok-num">0</span>, <span class="tok-key">"distinct"</span>: <span class="tok-num">3</span>, <span class="tok-key">"unique"</span>: <span class="tok-num">0</span>,
+  <span class="tok-key">"nominalCounts"</span>: {
+    <span class="tok-key">"Iris-setosa"</span>: <span class="tok-num">50</span>, <span class="tok-key">"Iris-versicolor"</span>: <span class="tok-num">50</span>, <span class="tok-key">"Iris-virginica"</span>: <span class="tok-num">50</span>
+  }
+}</pre>
+      </div>
+    </section>
+
+    <section id="summary">
+      <h3><span class="verb-tag get">GET</span> /datasets/:name/summary <a href="#summary" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets/{name}/summary</div>
+      <p>The bulk version of <code>/attribute-stats</code> — returns stats for every attribute on the dataset in a single response.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/datasets/iris/summary</span></pre>
+      </div>
+    </section>
+
+    <section id="histogram">
+      <h3><span class="verb-tag get">GET</span> /datasets/:name/histogram <a href="#histogram" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets/{name}/histogram?attribute=X&amp;bins=10&amp;groupBy=class</div>
+      <p>For numeric attributes, returns equal-width bins between min and max. For nominal attributes, one bin per value. Pass <code>groupBy=class</code> to break each bin down by class label — useful for assessing per-class feature separability.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-str">'http://localhost:7070/datasets/iris/histogram?attribute=petallength&bins=5&groupBy=class'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"attribute"</span>: <span class="tok-str">"petallength"</span>,
+  <span class="tok-key">"type"</span>: <span class="tok-str">"numeric"</span>,
+  <span class="tok-key">"bins"</span>: [
+    { <span class="tok-key">"lo"</span>: <span class="tok-num">1.0</span>, <span class="tok-key">"hi"</span>: <span class="tok-num">2.18</span>, <span class="tok-key">"count"</span>: <span class="tok-num">50</span>,
+      <span class="tok-key">"byClass"</span>: { <span class="tok-key">"Iris-setosa"</span>: <span class="tok-num">50</span>, <span class="tok-key">"Iris-versicolor"</span>: <span class="tok-num">0</span>, <span class="tok-key">"Iris-virginica"</span>: <span class="tok-num">0</span> } }
+  ],
+  <span class="tok-key">"missing"</span>: <span class="tok-num">0</span>,
+  <span class="tok-key">"classLabels"</span>: [<span class="tok-str">"Iris-setosa"</span>, <span class="tok-str">"Iris-versicolor"</span>, <span class="tok-str">"Iris-virginica"</span>]
+}</pre>
+      </div>
+    </section>
+
+    <section id="scatter">
+      <h3><span class="verb-tag get">GET</span> /datasets/:name/scatter <a href="#scatter" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets/{name}/scatter?x=A&amp;y=B&amp;sample=500</div>
+      <p>Per-point JSON for an x/y plot. Points carry a <code>class</code> field when the dataset has a nominal class. Set <code>jitter=true</code> to add Gaussian noise when an axis is nominal — the jitter is applied to the response only, never to the dataset on disk.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-str">'http://localhost:7070/datasets/iris/scatter?x=petallength&y=petalwidth&sample=200'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"x"</span>: <span class="tok-str">"petallength"</span>, <span class="tok-key">"y"</span>: <span class="tok-str">"petalwidth"</span>,
+  <span class="tok-key">"xType"</span>: <span class="tok-str">"numeric"</span>, <span class="tok-key">"yType"</span>: <span class="tok-str">"numeric"</span>,
+  <span class="tok-key">"classAttribute"</span>: <span class="tok-str">"class"</span>,
+  <span class="tok-key">"totalInstances"</span>: <span class="tok-num">150</span>, <span class="tok-key">"sampled"</span>: <span class="tok-num">150</span>,
+  <span class="tok-key">"points"</span>: [{ <span class="tok-key">"x"</span>: <span class="tok-num">1.4</span>, <span class="tok-key">"y"</span>: <span class="tok-num">0.2</span>, <span class="tok-key">"class"</span>: <span class="tok-str">"Iris-setosa"</span> }]
+}</pre>
+      </div>
+    </section>
+
+    <section id="scatter-matrix">
+      <h3><span class="verb-tag get">GET</span> /datasets/:name/scatter-matrix <a href="#scatter-matrix" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/datasets/{name}/scatter-matrix?attributes=A,B,C</div>
+      <p>Returns all unordered pairs of the listed attributes. The server caps the input at 6 attributes — that's up to 15 pairs in a single response.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-str">'http://localhost:7070/datasets/iris/scatter-matrix?attributes=sepallength,sepalwidth,petallength&sample=200'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"attributes"</span>: [<span class="tok-str">"sepallength"</span>, <span class="tok-str">"sepalwidth"</span>, <span class="tok-str">"petallength"</span>],
+  <span class="tok-key">"classAttribute"</span>: <span class="tok-str">"class"</span>,
+  <span class="tok-key">"totalInstances"</span>: <span class="tok-num">150</span>, <span class="tok-key">"sampled"</span>: <span class="tok-num">150</span>,
+  <span class="tok-key">"pairs"</span>: [
+    { <span class="tok-key">"x"</span>: <span class="tok-str">"sepallength"</span>, <span class="tok-key">"y"</span>: <span class="tok-str">"sepalwidth"</span>,
+      <span class="tok-key">"points"</span>: [{ <span class="tok-key">"x"</span>: <span class="tok-num">5.1</span>, <span class="tok-key">"y"</span>: <span class="tok-num">3.5</span>, <span class="tok-key">"class"</span>: <span class="tok-str">"Iris-setosa"</span> }] }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <!-- ====== FILTERS ====== -->
+    <section id="filters">
+      <h2>Filters &amp; transform <a href="#filters" class="anchor">#</a></h2>
+      <p>Filters preprocess datasets — normalisation, discretisation, attribute selection, PCA, missing-value imputation, and so on. The API surfaces the full WEKA filter classpath, exposes per-filter metadata for client-side form generation, and offers <strong>two distinct workflows</strong> for applying preprocessing before training.</p>
+
+      <h3><span class="verb-tag get">GET</span> /filters — List available filters</h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/filters</div>
+      <p>Every WEKA filter discoverable on the classpath, grouped by family: <code>unsupervised.attribute</code>, <code>unsupervised.instance</code>, <code>supervised.attribute</code>, <code>supervised.instance</code>, plus <code>misc</code> for top-level filters like <code>MultiFilter</code>. Each entry carries flags so the client picker can distinguish leakage-prone supervised filters from safe unsupervised ones.</p>
+      <p>The <code>supervised</code> flag is derived from the <code>SupervisedFilter</code> / <code>UnsupervisedFilter</code> marker interfaces — <code>null</code> for top-level filters that implement neither.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/filters</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK · excerpt</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"filters"</span>: {
+    <span class="tok-key">"unsupervised.attribute"</span>: [
+      { <span class="tok-key">"classname"</span>: <span class="tok-str">"weka.filters.unsupervised.attribute.Normalize"</span>,
+        <span class="tok-key">"supervised"</span>: <span class="tok-bool">false</span>, <span class="tok-key">"level"</span>: <span class="tok-str">"attribute"</span> }
+    ],
+    <span class="tok-key">"supervised.attribute"</span>: [
+      { <span class="tok-key">"classname"</span>: <span class="tok-str">"weka.filters.supervised.attribute.Discretize"</span>,
+        <span class="tok-key">"supervised"</span>: <span class="tok-bool">true</span>, <span class="tok-key">"level"</span>: <span class="tok-str">"attribute"</span> }
+    ],
+    <span class="tok-key">"misc"</span>: [
+      { <span class="tok-key">"classname"</span>: <span class="tok-str">"weka.filters.AllFilter"</span>,
+        <span class="tok-key">"supervised"</span>: <span class="tok-null">null</span>, <span class="tok-key">"level"</span>: <span class="tok-null">null</span> }
+    ]
+  }
+}</pre>
+      </div>
+    </section>
+
+    <section id="filters-metadata">
+      <h3><span class="verb-tag get">GET</span> /filters/metadata <a href="#filters-metadata" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag get">GET</span> http://localhost:7070/filters/metadata?filter=&lt;fqn&gt;</div>
+      <p>Per-filter introspection — returns WEKA's <code>globalInfo()</code> description and the full <code>listOptions()</code> schema so a client picker can render an options form without hardcoding any filter knowledge.</p>
+      <p>For boolean flags (<code>numArguments == 0</code>), <code>default</code> is the literal <code>true</code>/<code>false</code> — WEKA boolean flags default to off when absent. For value flags (<code>numArguments &gt;= 1</code>), <code>default</code> is the stringified value (omitted when no default is set).</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> <span class="tok-str">'http://localhost:7070/filters/metadata?filter=weka.filters.unsupervised.attribute.Normalize'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"classname"</span>:   <span class="tok-str">"weka.filters.unsupervised.attribute.Normalize"</span>,
+  <span class="tok-key">"supervised"</span>:  <span class="tok-bool">false</span>,
+  <span class="tok-key">"level"</span>:       <span class="tok-str">"attribute"</span>,
+  <span class="tok-key">"family"</span>:      <span class="tok-str">"unsupervised.attribute"</span>,
+  <span class="tok-key">"description"</span>: <span class="tok-str">"Normalizes all numeric values in the given dataset..."</span>,
+  <span class="tok-key">"options"</span>: [
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"S"</span>, <span class="tok-key">"synopsis"</span>: <span class="tok-str">"-S &lt;num&gt;"</span>,
+      <span class="tok-key">"description"</span>: <span class="tok-str">"The scaling factor (default 1.0)."</span>,
+      <span class="tok-key">"numArguments"</span>: <span class="tok-num">1</span>, <span class="tok-key">"default"</span>: <span class="tok-str">"1.0"</span> },
+    { <span class="tok-key">"name"</span>: <span class="tok-str">"T"</span>, <span class="tok-key">"synopsis"</span>: <span class="tok-str">"-T &lt;num&gt;"</span>,
+      <span class="tok-key">"description"</span>: <span class="tok-str">"The translation (default 0.0)."</span>,
+      <span class="tok-key">"numArguments"</span>: <span class="tok-num">1</span>, <span class="tok-key">"default"</span>: <span class="tok-str">"0.0"</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="transform">
+      <h3><span class="verb-tag post">POST</span> /transform — Apply a filter chain <a href="#transform" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/transform</div>
+      <p>Apply a chain of filters to an existing dataset and persist the result as a new dataset.</p>
+
+      <h4>Body parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">dataset</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Source dataset name.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">filters</span><span class="param-type">array of objects</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Non-empty array. Each element: <code>{ "filter": "&lt;weka.filters.* FQN&gt;", "options": [...] }</code>. Filter must start with <code>weka.filters.</code> (allowlist).</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">outputName</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">New dataset name (no extension, no path separators).</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">format</span><span class="param-type">string</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc"><code>"arff"</code> (default) or <code>"csv"</code>.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/transform</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{
+    "dataset": "iris",
+    "filters": [
+      {"filter": "weka.filters.unsupervised.attribute.Normalize", "options": []}
+    ],
+    "outputName": "iris-norm"
+  }'</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>201 Created</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"name"</span>:           <span class="tok-str">"iris-norm"</span>,
+  <span class="tok-key">"format"</span>:         <span class="tok-str">"arff"</span>,
+  <span class="tok-key">"path"</span>:           <span class="tok-str">"iris-norm.arff"</span>,
+  <span class="tok-key">"numInstances"</span>:   <span class="tok-num">150</span>,
+  <span class="tok-key">"numAttributes"</span>:  <span class="tok-num">5</span>,
+  <span class="tok-key">"filtersApplied"</span>: [<span class="tok-str">"weka.filters.unsupervised.attribute.Normalize"</span>]
+}</pre>
+      </div>
+
+      <div class="notice danger">
+        <strong>⚠ Leakage warning for supervised filters.</strong> Running supervised filters via <code>/transform</code> on your full dataset and then training on the result leaks class signal into the features. Use the <a href="#train">embedded filter chain on <code>POST /train</code></a> instead — the API will wrap your classifier in <code>FilteredClassifier</code> so the filter is fit per fold rather than once on the entire dataset.
+      </div>
+
+      <p>Common supervised offenders: <code>supervised.attribute.Discretize</code> (Fayyad–Irani MDL), <code>supervised.attribute.AttributeSelection</code>, <code>supervised.attribute.NominalToBinary</code>, <code>supervised.attribute.MergeNominalValues</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Leakage-safe: train with embedded filters</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/train</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{
+    "dataset":   "iris",
+    "algorithm": "weka.classifiers.trees.J48",
+    "modelName": "iris-fc-j48",
+    "filters": [
+      {"filter": "weka.filters.supervised.attribute.AttributeSelection",
+       "options": ["-E","weka.attributeSelection.CfsSubsetEval",
+                   "-S","weka.attributeSelection.BestFirst"]}
+    ]
+  }'</span></pre>
+      </div>
+
+      <div class="notice">
+        <strong>PCA is safe via this path.</strong> <code>weka.filters.unsupervised.attribute.PrincipalComponents</code> works on datasets with a nominal class — it ignores the class attribute when computing components and passes it through unchanged.
+      </div>
+    </section>
+
+    <section id="transform-preview">
+      <h3><span class="verb-tag post">POST</span> /transform/preview <a href="#transform-preview" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/transform/preview?head=20</div>
+      <p>Same request body as <code>/transform</code> minus <code>outputName</code>. Runs the chain <strong>in memory</strong> and returns metadata plus a small sample of transformed rows. Nothing is written to <code>DATA_DIR</code> — use this to iterate on a filter chain before committing.</p>
+
+      <h4>Query parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">head</span><span class="param-type">integer</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Number of transformed rows to return. Default <code>20</code>, bounded to 1–200.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">seed</span><span class="param-type">integer</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Random seed for the row shuffle. Default <code>42</code>.</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-str">'http://localhost:7070/transform/preview?head=10'</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{
+    "dataset": "iris",
+    "filters": [
+      {"filter": "weka.filters.unsupervised.attribute.Normalize", "options": []}
+    ]
+  }'</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"dataset"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"totalInstances"</span>: <span class="tok-num">150</span>, <span class="tok-key">"sampled"</span>: <span class="tok-num">10</span>,
+  <span class="tok-key">"numAttributes"</span>: <span class="tok-num">5</span>,
+  <span class="tok-key">"filtersApplied"</span>: [<span class="tok-str">"weka.filters.unsupervised.attribute.Normalize"</span>],
+  <span class="tok-key">"head"</span>: [
+    { <span class="tok-key">"sepallength"</span>: <span class="tok-num">0.222</span>, <span class="tok-key">"sepalwidth"</span>: <span class="tok-num">0.625</span>,
+      <span class="tok-key">"petallength"</span>: <span class="tok-num">0.068</span>, <span class="tok-key">"petalwidth"</span>: <span class="tok-num">0.042</span>,
+      <span class="tok-key">"class"</span>: <span class="tok-str">"Iris-setosa"</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <!-- ====== DIAGNOSTICS ====== -->
+    <section id="diag-errors">
+      <h2>Post-training diagnostics <a href="#diag-errors" class="anchor">#</a></h2>
+      <p>All five POST endpoints share the same request shape — a trained model, an evaluation dataset, and a handful of optional knobs for sampling and binning.</p>
+
+      <h4>Shared body parameters</h4>
+      <div class="params">
+        <div class="param">
+          <div class="param-head"><span class="param-name">model</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Trained model name.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">dataset</span><span class="param-type">string</span><span class="param-req req-required">required</span></div>
+          <div class="param-desc">Evaluation dataset.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">classValue</span><span class="param-type">string</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Nominal class label (defaults to index 0). Required for threshold, cost, and calibration curves.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">bins</span><span class="param-type">integer</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Number of bins for calibration. Default <code>10</code>, max <code>100</code>.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">sample</span><span class="param-type">integer</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Max points to return for <code>/errors</code>. Default <code>500</code>, max <code>5000</code>.</div>
+        </div>
+        <div class="param">
+          <div class="param-head"><span class="param-name">seed</span><span class="param-type">integer</span><span class="param-req req-optional">optional</span></div>
+          <div class="param-desc">Random seed for sampling. Default <code>42</code>.</div>
+        </div>
+      </div>
+
+      <h3><span class="verb-tag post">POST</span> /diagnostics/errors</h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/diagnostics/errors</div>
+      <p>Per-instance predicted vs. actual — WEKA's <em>Visualize classifier errors</em>. For numeric class, each point includes <code>actual</code>, <code>predicted</code>, and the absolute <code>error</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/diagnostics/errors</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris"}'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"dataset"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"classType"</span>: <span class="tok-str">"nominal"</span>,
+  <span class="tok-key">"totalInstances"</span>: <span class="tok-num">150</span>, <span class="tok-key">"sampled"</span>: <span class="tok-num">150</span>,
+  <span class="tok-key">"points"</span>: [
+    { <span class="tok-key">"index"</span>: <span class="tok-num">0</span>,
+      <span class="tok-key">"actual"</span>: <span class="tok-str">"Iris-setosa"</span>,
+      <span class="tok-key">"predicted"</span>: <span class="tok-str">"Iris-setosa"</span>,
+      <span class="tok-key">"correct"</span>: <span class="tok-bool">true</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="diag-threshold">
+      <h3><span class="verb-tag post">POST</span> /diagnostics/threshold-curve <a href="#diag-threshold" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/diagnostics/threshold-curve</div>
+      <p>ROC / threshold curve for a chosen positive class. Each point carries threshold, TPR, FPR, precision, recall, and F1. The overall AUC is included as a top-level field. Numeric-class models return <code>400 NOT_NOMINAL_CLASS</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/diagnostics/threshold-curve</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris","classValue":"Iris-versicolor"}'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"dataset"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"classValue"</span>: <span class="tok-str">"Iris-versicolor"</span>,
+  <span class="tok-key">"auc"</span>: <span class="tok-num">0.99</span>,
+  <span class="tok-key">"points"</span>: [
+    { <span class="tok-key">"threshold"</span>: <span class="tok-num">0.0</span>, <span class="tok-key">"truePositiveRate"</span>: <span class="tok-num">1.0</span>, <span class="tok-key">"falsePositiveRate"</span>: <span class="tok-num">1.0</span>,
+      <span class="tok-key">"precision"</span>: <span class="tok-num">0.33</span>, <span class="tok-key">"recall"</span>: <span class="tok-num">1.0</span>, <span class="tok-key">"fMeasure"</span>: <span class="tok-num">0.5</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="diag-margin">
+      <h3><span class="verb-tag post">POST</span> /diagnostics/margin-curve <a href="#diag-margin" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/diagnostics/margin-curve</div>
+      <p>Cumulative margin distribution — WEKA's <code>MarginCurve</code>. Useful for ensemble diagnostics (AdaBoost, Bagging) to see whether margins improve as boosting iterations accrue.</p>
+      <p>Field meaning: <code>margin</code> is the difference between the probability assigned to the actual class and the highest probability for any other class. <code>current</code> and <code>cumulative</code> together describe the empirical CDF of margins.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/diagnostics/margin-curve</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris"}'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"dataset"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"points"</span>: [
+    { <span class="tok-key">"margin"</span>: <span class="tok-num">-1.0</span>, <span class="tok-key">"current"</span>: <span class="tok-num">0.0</span>,   <span class="tok-key">"cumulative"</span>: <span class="tok-num">0.0</span> },
+    { <span class="tok-key">"margin"</span>: <span class="tok-num">0.92</span>, <span class="tok-key">"current"</span>: <span class="tok-num">3.0</span>,   <span class="tok-key">"cumulative"</span>: <span class="tok-num">0.02</span> },
+    { <span class="tok-key">"margin"</span>: <span class="tok-num">1.0</span>,  <span class="tok-key">"current"</span>: <span class="tok-num">147.0</span>, <span class="tok-key">"cumulative"</span>: <span class="tok-num">1.0</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="diag-cost">
+      <h3><span class="verb-tag post">POST</span> /diagnostics/cost-curve <a href="#diag-cost" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/diagnostics/cost-curve</div>
+      <p>Drummond–Holte cost curve for a chosen positive class. Plots the <em>Normalised Expected Cost</em> against the <em>Probability Cost Function</em> — i.e. how sensitive the model's expected cost is to changes in class skew. A flat curve near zero means the model is robust to class skew; a curve that spikes near the centre means cost is highly sensitive.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/diagnostics/cost-curve</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris","classValue":"Iris-versicolor"}'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"dataset"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"classValue"</span>: <span class="tok-str">"Iris-versicolor"</span>,
+  <span class="tok-key">"points"</span>: [
+    { <span class="tok-key">"probabilityCostFunction"</span>: <span class="tok-num">0.0</span>, <span class="tok-key">"normalizedExpectedCost"</span>: <span class="tok-num">0.0</span> },
+    { <span class="tok-key">"probabilityCostFunction"</span>: <span class="tok-num">0.5</span>, <span class="tok-key">"normalizedExpectedCost"</span>: <span class="tok-num">0.04</span> },
+    { <span class="tok-key">"probabilityCostFunction"</span>: <span class="tok-num">1.0</span>, <span class="tok-key">"normalizedExpectedCost"</span>: <span class="tok-num">0.0</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <section id="diag-calibration">
+      <h3><span class="verb-tag post">POST</span> /diagnostics/calibration <a href="#diag-calibration" class="anchor">#</a></h3>
+      <div class="endpoint"><span class="verb-tag post">POST</span> http://localhost:7070/diagnostics/calibration</div>
+      <p>Reliability diagram and Brier score. Manually binned because WEKA doesn't ship a first-party utility. Each bin reports its <code>predictedProb</code> (mean predicted probability of instances in that bin) and <code>observedFraction</code> (fraction of those instances that actually belonged to the positive class).</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot req"></span>Request</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/diagnostics/calibration</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris","classValue":"Iris-versicolor","bins":10}'</span></pre>
+      </div>
+      <div class="code-block">
+        <div class="code-block-head"><span class="label"><span class="status-dot res"></span>200 OK</span><button class="copy">Copy</button></div>
+<pre class="code">{
+  <span class="tok-key">"model"</span>: <span class="tok-str">"iris-j48"</span>, <span class="tok-key">"dataset"</span>: <span class="tok-str">"iris"</span>,
+  <span class="tok-key">"classValue"</span>: <span class="tok-str">"Iris-versicolor"</span>,
+  <span class="tok-key">"brierScore"</span>: <span class="tok-num">0.04</span>,
+  <span class="tok-key">"totalInstances"</span>: <span class="tok-num">150</span>,
+  <span class="tok-key">"bins"</span>: [
+    { <span class="tok-key">"bin"</span>: <span class="tok-num">0</span>, <span class="tok-key">"lo"</span>: <span class="tok-num">0.0</span>, <span class="tok-key">"hi"</span>: <span class="tok-num">0.1</span>,
+      <span class="tok-key">"count"</span>: <span class="tok-num">99</span>, <span class="tok-key">"predictedProb"</span>: <span class="tok-num">0.01</span>, <span class="tok-key">"observedFraction"</span>: <span class="tok-num">0.0</span> }
+  ]
+}</pre>
+      </div>
+    </section>
+
+    <!-- ====== WALKTHROUGH ====== -->
+    <section id="walkthrough">
+      <h2>End-to-end walkthrough <a href="#walkthrough" class="anchor">#</a></h2>
+      <p>A complete tour of the API — from uploading the sample <code>iris.arff</code> through training, predicting, evaluating, applying filters, and inspecting post-training diagnostics. Run these requests in order against a fresh instance to reproduce the test suite end to end.</p>
+
+      <div class="code-block">
+        <div class="code-block-head"><span class="label">Full walkthrough</span><button class="copy">Copy</button></div>
+<pre class="code"><span class="tok-comment"># 1. upload</span>
+<span class="tok-cmd">curl</span> -F file=@iris.arff -F name=iris <span class="tok-url">http://localhost:7070/datasets</span>
+
+<span class="tok-comment"># 2. train</span>
+<span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/train</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"dataset":"iris",
+       "algorithm":"weka.classifiers.trees.J48",
+       "modelName":"iris-j48"}'</span>
+
+<span class="tok-comment"># 3. predict</span>
+<span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/predict</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","instances":[
+       {"sepallength":5.1,"sepalwidth":3.5,
+        "petallength":1.4,"petalwidth":0.2}
+     ]}'</span>
+
+<span class="tok-comment"># 4. evaluate</span>
+<span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/evaluate</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris"}'</span>
+
+<span class="tok-comment"># 5. diagnostics</span>
+<span class="tok-cmd">curl</span> -X POST <span class="tok-url">http://localhost:7070/diagnostics/threshold-curve</span> \
+  -H <span class="tok-str">'Content-Type: application/json'</span> \
+  -d <span class="tok-str">'{"model":"iris-j48","dataset":"iris",
+       "classValue":"Iris-versicolor"}'</span>
+
+<span class="tok-comment"># 6. tree structure</span>
+<span class="tok-cmd">curl</span> <span class="tok-url">http://localhost:7070/models/iris-j48/tree</span></pre>
+      </div>
+    </section>
+
+    <section id="legal">
+      <h2>Legal &amp; attribution <a href="#legal" class="anchor">#</a></h2>
+      <p>This page documents a project built during a Master's of AI at the University of Waikato that integrates with the open-source WEKA library. The sections below clarify the relationship and credit the WEKA project appropriately.</p>
+
+      <div class="footer-disclaimer" style="margin: 16px 0;">
+        <strong>Disclaimer.</strong> This project was built by a Master's of AI student at the University of Waikato and integrates with WEKA. WEKA and the WEKA logo belong to their respective copyright holders.
+      </div>
+
+      <div class="footer-attrib" style="margin-top: 14px;">
+        <img src="weka_logo.png" alt="WEKA logo" />
+        <span style="font-size: 13px; color: var(--text-muted);">
+          WEKA logo used under the <a href="https://creativecommons.org/licenses/by-sa/2.5/" target="_blank" rel="noopener" style="color: var(--accent);">Creative Commons Attribution-ShareAlike 2.5 License</a>.
+        </span>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // sidebar active state on scroll
+  const sections = document.querySelectorAll('main.content section[id]');
+  const links = document.querySelectorAll('.sidebar-link');
+  const linkMap = {};
+  links.forEach(l => {
+    const href = l.getAttribute('href');
+    if (href && href.startsWith('#')) linkMap[href.slice(1)] = l;
+  });
+
+  function setActive(id) {
+    links.forEach(l => l.classList.remove('active'));
+    if (linkMap[id]) linkMap[id].classList.add('active');
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) setActive(e.target.id);
+    });
+  }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(s => io.observe(s));
+
+  // copy buttons
+  document.querySelectorAll('.copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const block = btn.closest('.code-block');
+      const pre = block.querySelector('pre.code');
+      if (!pre) return;
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.textContent = orig; }, 1200);
+      });
+    });
+  });
+
+  // simple client-side search filter on sidebar
+  const search = document.querySelector('.search');
+  if (search) {
+    search.addEventListener('input', () => {
+      const q = search.value.trim().toLowerCase();
+      document.querySelectorAll('.sidebar-link').forEach(l => {
+        const txt = l.textContent.toLowerCase();
+        l.style.display = (!q || txt.includes(q)) ? '' : 'none';
+      });
+      document.querySelectorAll('.sidebar-group-title, .sidebar-title').forEach(h => {
+        if (!q) { h.style.display = ''; return; }
+        let n = h.nextElementSibling, hasVisible = false;
+        while (n && !n.classList.contains('sidebar-group-title') && !n.classList.contains('sidebar-title')) {
+          if (n.classList.contains('sidebar-link') && n.style.display !== 'none') { hasVisible = true; break; }
+          n = n.nextElementSibling;
+        }
+        h.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -6,7 +6,7 @@
         <title>Projects — Multi-agent systems & AI engineering · Ademar Tutor</title>
         <meta
             name="description"
-            content="Selected work by Ademar Tutor: GLAMLI multi-agent AutoML (dissertation), Adematic AI engineering for SEO/MarTech clients, and earlier engineering leadership at Bootyard."
+            content="Selected work by Ademar Tutor: GLAMLI multi-agent AutoML (dissertation), the WEKA API Server powering it, LexiTau and LexExtract agentic Text-to-SQL, and earlier engineering leadership at Bootyard."
         />
         <link rel="canonical" href="https://www.ademartutor.com/projects" />
 
@@ -18,7 +18,7 @@
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Ademar Tutor" />
         <meta property="og:title" content="Projects — Multi-agent systems & AI engineering · Ademar Tutor" />
-        <meta property="og:description" content="Selected work by Ademar Tutor: GLAMLI multi-agent AutoML (dissertation), Adematic AI engineering for SEO/MarTech clients, and earlier engineering leadership at Bootyard." />
+        <meta property="og:description" content="Selected work by Ademar Tutor: GLAMLI multi-agent AutoML (dissertation), the WEKA API Server powering it, LexiTau and LexExtract agentic Text-to-SQL, and earlier engineering leadership at Bootyard." />
         <meta property="og:url" content="https://www.ademartutor.com/projects" />
         <meta property="og:image" content="https://www.ademartutor.com/assets/og-projects.png" />
         <meta property="og:image:width" content="1200" />
@@ -28,7 +28,7 @@
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Projects — Ademar Tutor" />
-        <meta name="twitter:description" content="GLAMLI multi-agent AutoML, Adematic client work, and engineering leadership across Bootyard, LeagueSide, HURR, Codetoki." />
+        <meta name="twitter:description" content="GLAMLI multi-agent AutoML, the WEKA API Server powering it, Adematic client work, and engineering leadership across Bootyard, LeagueSide, HURR, Codetoki." />
         <meta name="twitter:image" content="https://www.ademartutor.com/assets/og-projects.png" />
         <meta name="twitter:image:alt" content="Projects by Ademar Tutor." />
 
@@ -91,13 +91,13 @@
                 </h1>
                 <p class="lede">
                     A selection of open-source systems and research artifacts
-                    by Ademar Tutor: GLAMLI (Master's dissertation), LexiTau
-                    and LexExtract (agentic Text-to-SQL over financial
-                    documents), an LLM-as-a-Judge evaluator, and
-                    SafeBeautyLedger. Most started as research questions and
-                    ended up as code — from papers, from production problems,
-                    or from a weekend's curiosity. Each links to a write-up,
-                    the repo, or both.
+                    by Ademar Tutor: GLAMLI (Master's dissertation), the WEKA
+                    API Server powering its tool layer, LexiTau and
+                    LexExtract (agentic Text-to-SQL over financial documents),
+                    an LLM-as-a-Judge evaluator, and SafeBeautyLedger. Most
+                    started as research questions and ended up as code — from
+                    papers, from production problems, or from a weekend's
+                    curiosity. Each links to a write-up, the repo, or both.
                 </p>
             </header>
 
@@ -113,6 +113,10 @@
                                     >GLAMLI (Dissertation)</a
                                 >
                                 · in progress
+                            </li>
+                            <li>
+                                <a href="#weka-api">WEKA API Server</a> · REST
+                                layer over WEKA
                             </li>
                             <li>
                                 <a href="#lexitau">LexiTau</a> · agentic
@@ -183,6 +187,68 @@
                                     <div class="proj-links">
                                         <span class="muted"
                                             >repo link when public</span
+                                        >
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="proj-row" id="weka-api" tabindex="0">
+                                <div class="proj-head">
+                                    <h3 class="proj-title">
+                                        WEKA API Server
+                                        <span class="arrow" aria-hidden="true"
+                                            >→</span
+                                        >
+                                    </h3>
+                                    <span class="proj-meta"
+                                        >2026 · rest layer over weka</span
+                                    >
+                                </div>
+                                <p class="proj-summary">
+                                    A small REST API wrapping the open-source
+                                    WEKA machine learning library — dataset
+                                    management, classifier training,
+                                    prediction, evaluation, EDA,
+                                    leakage-safe preprocessing, and
+                                    post-training diagnostics, all over plain
+                                    JSON. Built as the tool layer GLAMLI's
+                                    agents call into.
+                                </p>
+                                <div class="proj-detail">
+                                    <ul class="proj-bullets">
+                                        <li>
+                                            Allowlisted classnames
+                                            (<code>weka.classifiers.*</code>
+                                            / <code>weka.filters.*</code>) and
+                                            input validation around the WEKA
+                                            classpath
+                                        </li>
+                                        <li>
+                                            Diagnostics endpoints: ROC,
+                                            margin, cost curves, calibration
+                                            plots, per-instance error
+                                            visualisation
+                                        </li>
+                                        <li>
+                                            Filesystem persistence for
+                                            datasets and serialized models
+                                            via Docker bind mounts
+                                        </li>
+                                        <li>
+                                            Stack: Java 17 · Javalin · WEKA ·
+                                            Jackson · Maven · Docker Compose
+                                        </li>
+                                    </ul>
+                                    <div class="proj-links">
+                                        <a
+                                            href="/projects/weka-api/"
+                                            >docs</a
+                                        >
+                                        <a
+                                            href="https://github.com/iamademar/weka-api"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >github · iamademar/weka-api</a
                                         >
                                     </div>
                                 </div>
@@ -442,6 +508,20 @@
                                     walks non-experts through a real ML workflow (load → profile →
                                     train → evaluate → deploy). Planner-with-revision over a typed tool
                                     registry, sandboxed execution, full prompt/tool-call traces
+                                </p>
+                            </a>
+                            <a class="proj-card" href="#weka-api">
+                                <span class="proj-meta"
+                                    >2026 · rest layer over weka</span
+                                >
+                                <h3 class="proj-title">WEKA API Server</h3>
+                                <p class="proj-summary">
+                                    REST API wrapping the open-source WEKA ML
+                                    library — dataset management, training,
+                                    prediction, EDA, leakage-safe
+                                    preprocessing, and diagnostics over plain
+                                    JSON. The tool layer GLAMLI's agents call
+                                    into.
                                 </p>
                             </a>
                             <a class="proj-card" href="#lexitau">
