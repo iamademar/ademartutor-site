@@ -12,6 +12,12 @@
     { "route": "/about.html", "redirect": "/about", "statusCode": 301 },
     { "route": "/projects.html", "redirect": "/projects", "statusCode": 301 },
     {
+      "route": "/reports/dsatur*",
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' blob: https://fonts.gstatic.com; img-src 'self' data: blob: https://cdn.prod.website-files.com https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' blob: https://www.google-analytics.com https://*.analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+      }
+    },
+    {
       "route": "/assets/*",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
