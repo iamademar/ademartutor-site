@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ===== SEO / GEO metadata (static; present before JS runs so crawlers and AI fetchers can read it) ===== -->
+<!-- BASE_URL: update this single value (and the og:url / canonical / sitemap) if the public address changes. -->
+<title>Can Generative AI Improve Bioacoustic Classification? — Ademar Tutor</title>
+<meta name="description" content="An interactive explainer: can a general-purpose AI audio generator produce synthetic bird, frog and insect calls realistic enough to help a classifier detect a wetland's rarest species?">
+<meta name="author" content="Ademar Tutor">
+<meta name="keywords" content="generative AI, bioacoustics, AudioLDM 2, BirdNET, rare species detection, passive acoustic monitoring, synthetic data augmentation, Pantanal, BirdCLEF-2026, macro-AUC">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1">
+<link rel="canonical" href="https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Can Generative AI Improve Bioacoustic Classification?">
+<meta property="og:description" content="Can a general-purpose AI audio generator produce synthetic calls realistic enough to help a classifier recognise a wetland's rarest species? An interactive, evidence-based explainer.">
+<meta property="og:url" content="https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species">
+<meta property="og:image" content="https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species/assets/fig01-pantanal.jpg">
+<meta property="og:image:width" content="900">
+<meta property="og:image:height" content="653">
+<meta property="og:image:alt" content="Aerial photograph of the flooded Pantanal wetland.">
+<meta property="og:site_name" content="Ademar Tutor · Research">
+<meta property="og:locale" content="en_GB">
+<meta property="article:author" content="Ademar Tutor">
+<meta property="article:published_time" content="2026-06-19">
+<meta property="article:section" content="Machine learning">
+
+<!-- Twitter / X card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Can Generative AI Improve Bioacoustic Classification?">
+<meta name="twitter:description" content="Can a general-purpose AI audio generator produce synthetic calls realistic enough to help detect a wetland's rarest species? An interactive, evidence-based explainer.">
+<meta name="twitter:image" content="https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species/assets/fig01-pantanal.jpg">
+<meta name="twitter:image:alt" content="Aerial photograph of the flooded Pantanal wetland.">
+
+<!-- Structured data: describes only content visible on the page. No GEO-specific schema exists. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ScholarlyArticle",
+      "@id": "https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species#article",
+      "headline": "Can Generative AI Improve Bioacoustic Classification?",
+      "name": "Can Generative AI Improve Bioacoustic Classification? A Study on BirdCLEF-2026",
+      "description": "Can a general-purpose AI audio generator produce synthetic bird, frog and insect calls realistic enough to help a classifier recognise a wetland's rarest species, the ones conservation most needs to find?",
+      "abstract": "An evidence-based study of generative data augmentation for rare-species bioacoustic classification on the BirdCLEF-2026 target set. AudioLDM 2 generates candidate calls that are verified by BirdNET before joining training. Of 3,484 generated clips, 800 (23%) passed verification, with keep-rate splitting sharply by taxon (Reptilia 78.1% down to Aves 0.0%). The best configuration (fine-tuned model with synthetic audio) reaches macro-AUC 0.9549, and the benefit concentrates in the rarest classes: for classes with five or fewer examples, mean per-class AUC rises from 0.666 to 0.890.",
+      "inLanguage": "en",
+      "datePublished": "2026-06-19",
+      "dateModified": "2026-06-19",
+      "url": "https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species",
+      "mainEntityOfPage": "https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species",
+      "image": "https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species/assets/fig01-pantanal.jpg",
+      "keywords": "generative AI, bioacoustics, AudioLDM 2, BirdNET, rare species detection, passive acoustic monitoring, synthetic data augmentation, Pantanal, BirdCLEF-2026, macro-AUC",
+      "author": {
+        "@type": "Person",
+        "name": "Ademar Tutor",
+        "affiliation": {
+          "@type": "CollegeOrUniversity",
+          "name": "University of Waikato"
+        }
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "University of Waikato — COMPX525"
+      },
+      "isBasedOn": "https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species/report/main.pdf",
+      "citation": "Ademar Tutor. Can Generative AI Improve Bioacoustic Classification? A Study on BirdCLEF-2026. University of Waikato, COMPX525, 2026.",
+      "about": [
+        { "@type": "Thing", "name": "Bioacoustic classification" },
+        { "@type": "Thing", "name": "Generative data augmentation" },
+        { "@type": "Thing", "name": "Passive acoustic monitoring" }
+      ]
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species#dataset",
+      "name": "BirdCLEF-2026 target subset (long-tailed, 234 classes)",
+      "description": "The target-species subset used in the study: 234 classes spanning Aves, Amphibia, Insecta, Mammalia and a single Reptilia, with a long-tailed distribution of recordings per class (18 classes have five or fewer recordings; four have exactly one).",
+      "measurementTechnique": "macro-AUC (ranking quality averaged equally across classes)",
+      "keywords": "BirdCLEF-2026, Pantanal, bioacoustics, long-tailed classification",
+      "isAccessibleForFree": true,
+      "creator": {
+        "@type": "Person",
+        "name": "Ademar Tutor"
+      }
+    }
+  ]
+}
+</script>
+<!-- ===== end SEO / GEO metadata ===== -->
+
+<script src="./support.js"></script>
+</head>
+<body>
+
+<!-- ===== Crawlable / AI-extractable fallback. Visible only when JavaScript is off; -->
+<!-- gives non-JS crawlers and AI fetchers the article's substance as plain semantic HTML. ===== -->
+<noscript>
+<main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Georgia,'Times New Roman',serif;color:#20251f;line-height:1.6">
+  <p style="font-family:system-ui,sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#76776b">An interactive reading · ≈12 min · COMPX525, University of Waikato</p>
+  <h1 style="font-size:34px;line-height:1.15;margin:8px 0 16px">Can Generative AI Improve Bioacoustic Classification?</h1>
+  <p style="font-size:18px;color:#43463c"><em>Can a general-purpose AI audio generator produce synthetic bird, frog, and insect calls realistic enough to help a classifier recognise a wetland's rarest species, the ones conservation most needs to find?</em></p>
+  <p>Passive acoustic monitoring can survey ecosystems at scale, but rare species have too few recordings to learn from, and they are exactly the ones conservation needs to detect. If synthetic audio can fill that gap, it changes what is possible for biodiversity monitoring. This study tests that idea on the BirdCLEF-2026 target set: AudioLDM 2 generates candidate calls, BirdNET verifies them, and only the clips that pass join training.</p>
+  <p style="font-family:system-ui,sans-serif;font-size:14px;color:#76776b">By <strong>Ademar Tutor</strong> · COMPX525, University of Waikato · 19 June 2026 · <a href="report/main.pdf" style="color:#2c5a4f">Read the full paper (31 pp)</a></p>
+
+  <h2 style="font-size:22px;margin:28px 0 10px">Key findings</h2>
+  <ul style="padding-left:20px">
+    <li>Macro-AUC measures ranking quality averaged equally across classes, so a rare species counts as much as a common one (higher is better; 1.0 is perfect).</li>
+    <li>The best configuration — a fine-tuned model with synthetic audio — reaches a macro-AUC of 0.9549.</li>
+    <li>For the rarest classes (five or fewer examples), mean per-class AUC rises from 0.666 to 0.890 when synthetic audio is added — that is where manufactured data does real work.</li>
+    <li>Of 3,484 generated clips, only 800 — 23% — passed BirdNET verification overall.</li>
+    <li>Keep-rate splits sharply by taxon: Reptilia 78.1%, Insecta 67.9%, Amphibia 7.3%, Mammalia 6.4%, and Aves 0.0% — not a single generated bird clip was kept.</li>
+    <li>Only about 2% of focal recordings fall inside the Pantanal itself, so the training audio barely comes from the target place (a domain shift between clean focal clips and messy field soundscapes).</li>
+    <li>The gain concentrates where clips were actually kept: amphibians, which received synthetic audio, climb from 0.860 to 0.951, while birds, which got none, stay essentially flat near 0.96.</li>
+  </ul>
+
+  <h2 style="font-size:22px;margin:28px 0 10px">What the article covers</h2>
+  <ol style="padding-left:20px">
+    <li>A wetland too big to listen to</li>
+    <li>The long tail</li>
+    <li>Trained clean, tested messy</li>
+    <li>Scarcity has a taxonomy</li>
+    <li>Manufacture the missing data</li>
+    <li>A 2×2 to isolate the cause</li>
+    <li>How a sound becomes a guess</li>
+    <li>What passed the filter</li>
+    <li>The headline number</li>
+    <li>Where the benefit lives</li>
+    <li>A hidden trade-off</li>
+    <li>What it does — and doesn't — show</li>
+    <li>What to remember</li>
+    <li>The toolbox (tech stack)</li>
+  </ol>
+
+  <p style="font-family:system-ui,sans-serif;font-size:13px;color:#9a9079;margin-top:28px">The full interactive version of this explainer — with scrolling figures, audio comparisons and the real-vs-synthetic gallery — requires JavaScript.</p>
+</main>
+</noscript>
+
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Libre+Franklin:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #f4f1ea; color: #20251f; font-family: 'Libre Franklin', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  ::selection { background: #2c5a4f; color: #fff; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes drawIn { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+  @keyframes pulseDot { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+  .om-scroll::-webkit-scrollbar { width: 10px; height: 10px; }
+  .om-scroll::-webkit-scrollbar-thumb { background: #d6ccb6; border-radius: 6px; }
+  .wsfade { animation: fadeUp .4s ease; }
+  .dropcap::first-letter { font-family: 'Fraunces', serif; font-weight: 600; float: left; font-size: 3.5em; line-height: .78; padding: 8px 12px 0 0; color: #a8553a; }
+</style>
+<script src="https://unpkg.com/wavesurfer.js@7"></script>
+</helmet>
+<div>{{ app }}</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const h = React.createElement;
+
+const C = {
+  bg:'#f2ebdd', panel:'#f8f3e8', card:'#ffffff', ink:'#1e211b', sub:'#43463c',
+  mut:'#76776b', faint:'#9a9079', line:'#ddd3bf', line2:'#ece3d2',
+  teal:'#2c5a4f', tealL:'#6fa092', tealBg:'#e2ebe5',
+  amber:'#b07d22', amberBg:'#f0e4cb', rust:'#a8553a', sky:'#3f6ea0', plum:'#46476f'
+};
+const LEVELS = ['New to the subject','Some familiarity','Comfortable with technical details','Researcher / practitioner'];
+const CLAIM = {
+  report:   { c:C.teal,  bg:C.tealBg,  label:'Reported finding' },
+  simplify: { c:C.sky,   bg:'#e4ecf3',  label:'Simplified explanation' },
+  interpret:{ c:C.plum,  bg:'#e7e6f0',  label:'Interpretation' },
+  limit:    { c:C.rust,  bg:'#f3e3dd',  label:'Limitation' }
+};
+
+// ===== Reusable Real/Synthetic WaveSurfer player (shared by every gallery card) =====
+class WaveAB extends React.Component {
+  constructor(p){
+    super(p);
+    this.state = { isReal: !!p.realSrc, playing:false, ready:false, err:false, cur:0, dur:0 };
+    this.elRef = (el)=>{ this.el = el; };
+  }
+  fmt(s){ if(!isFinite(s)||s<0) s=0; const m=Math.floor(s/60); const ss=Math.floor(s%60); return m+':'+(ss<10?'0':'')+ss; }
+  curSrc(){ return this.state.isReal ? this.props.realSrc : this.props.synthSrc; }
+  componentDidMount(){
+    if(typeof WaveSurfer==='undefined'){ this._retry=setTimeout(()=>this.componentDidMount(),200); return; }
+    if(!this.el) return;
+    const src=this.curSrc();
+    if(!src){ this.setState({err:true}); return; }
+    try {
+      this.ws = WaveSurfer.create({
+        container:this.el, height:56,
+        waveColor:C.line, progressColor:this.state.isReal?C.teal:C.amber, cursorColor:C.sub,
+        barWidth:2, barGap:1, barRadius:2, normalize:true, interact:true, url:src });
+    } catch(e){ this.setState({err:true}); return; }
+    this.ws.on('ready', ()=>this.setState({ready:true, err:false, dur:this.ws.getDuration()}));
+    this.ws.on('timeupdate', (t)=>this.setState({cur:t}));
+    this.ws.on('error', ()=>this.setState({err:true, playing:false}));
+    this.ws.on('finish', ()=>this.setState({playing:false}));
+    this.ws.on('play', ()=>this.setState({playing:true}));
+    this.ws.on('pause', ()=>this.setState({playing:false}));
+  }
+  componentWillUnmount(){ if(this._retry) clearTimeout(this._retry); if(this.ws){ try{ this.ws.pause(); }catch(e){} try{ this.ws.destroy(); }catch(e){} } }
+  pick(real){
+    if(real===this.state.isReal) return;
+    const src = real ? this.props.realSrc : this.props.synthSrc;
+    if(!src) return;
+    this.setState({ isReal:real, playing:false, ready:false, err:false, cur:0, dur:0 });
+    if(this.ws){ try{ this.ws.setOptions({ progressColor: real?C.teal:C.amber }); this.ws.load(src); }catch(e){ this.setState({err:true}); } }
+  }
+  toggle(){ if(this.ws){ try{ this.ws.playPause(); }catch(e){} } }
+  render(){
+    const s=this.state, real=s.isReal, accent=real?C.teal:C.amber;
+    const hasReal=!!this.props.realSrc, hasSynth=!!this.props.synthSrc, reduced=this.props.reduced;
+    const tFont={ fontFamily:"'Libre Franklin',sans-serif" };
+    const icon = s.playing
+      ? '<svg width="12" height="12" viewBox="0 0 13 13" aria-hidden="true"><rect x="2" y="1.5" width="3" height="10" rx="1" fill="#fff"/><rect x="8" y="1.5" width="3" height="10" rx="1" fill="#fff"/></svg>'
+      : '<svg width="12" height="12" viewBox="0 0 13 13" aria-hidden="true"><path d="M3 1.5 L11 6.5 L3 11.5 Z" fill="#fff"/></svg>';
+    const note = real ? this.props.realNote : this.props.synthNote;
+    return h('div',{},
+      // toggle
+      h('div',{style:{display:'flex',gap:8,marginBottom:12}},
+        h('button',{onClick:()=>this.pick(true), disabled:!hasReal, 'aria-pressed':real,
+          style:Object.assign({},tFont,{flex:1,padding:'8px',borderRadius:7,border:'1px solid '+(real?C.teal:C.line),
+            background:real?C.tealBg:C.bg, color:!hasReal?C.faint:(real?C.teal:C.sub),
+            cursor:hasReal?'pointer':'not-allowed', fontSize:12,fontWeight:600,transition:reduced?'none':'all .25s ease'})}, 'Real recording'),
+        h('button',{onClick:()=>this.pick(false), disabled:!hasSynth, 'aria-pressed':!real,
+          style:Object.assign({},tFont,{flex:1,padding:'8px',borderRadius:7,border:'1px solid '+(!real?C.amber:C.line),
+            background:!real?C.amberBg:C.bg, color:!hasSynth?C.faint:(!real?'#8a5f15':C.sub),
+            cursor:hasSynth?'pointer':'not-allowed', fontSize:12,fontWeight:600,transition:reduced?'none':'all .25s ease'})}, 'Synthetic (AudioLDM 2)')),
+      // player row
+      h('div',{style:{display:'flex',alignItems:'center',gap:11}},
+        h('button',{onClick:()=>this.toggle(), disabled:s.err,
+          'aria-label':(s.playing?'Pause ':'Play ')+(real?'real recording':'synthetic clip')+' of '+this.props.species,
+          style:{flexShrink:0,width:36,height:36,borderRadius:'50%',border:'none',background:s.err?C.faint:accent,
+            cursor:s.err?'default':'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:reduced?'none':'background .25s ease'}},
+          h('span',{style:{display:'flex'},dangerouslySetInnerHTML:{__html:icon}})),
+        h('div',{style:{position:'relative',flex:1,minWidth:0}},
+          h('div',{ref:this.elRef, role:'img',
+            'aria-label':(real?'Real':'Synthetic')+' waveform for '+this.props.species, style:{width:'100%'}}),
+          s.err?h('div',{style:{display:'flex',alignItems:'center',gap:3,position:'absolute',inset:0}},
+            [10,18,28,20,34,24,14,30,22,12,26,16,32,18,10].map((hh,i)=>h('div',{key:i,style:{flex:1,height:hh,background:C.line,borderRadius:2}}))):null),
+        h('div',{style:Object.assign({},tFont,{flexShrink:0,fontSize:10.5,color:C.mut,minWidth:62,textAlign:'right'})},
+          s.err?'—':(this.fmt(s.cur)+' / '+this.fmt(s.dur)))),
+      // transcript line
+      h('div',{style:{marginTop:10,padding:'9px 12px',background:C.bg,borderRadius:6,fontSize:11.5,color:C.mut,lineHeight:1.5}},
+        h('b',{style:{color:real?C.teal:'#8a5f15'}}, real?'Real recording. ':'Synthetic AudioLDM 2 clip. '),
+        s.err? 'Clip unavailable — drop the file into assets/audio/species/ to enable playback.' : note));
+  }
+}
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      level: 0, active: 0, glossary: false, evidence: false,
+      term: null, reduced: false, staticMode: false, hc: false,
+      expanded: {}, started: false, band: 0, abReal: true,
+      domainAnimal: 'weeping-frog', photoErr: {}, videoModal: null, speciesModal: null
+    };
+    this.stepEls = [];
+    this.wave = { focal:null, soundscape:null };
+    this.waveEls = {};
+    this.waveLoaded = null;
+    this.wavePlaying = null;
+    this._refs = {};
+  }
+
+  componentDidMount(){
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) this.setState({ reduced: true });
+    this._compute = ()=>{
+      if(this.state.staticMode || this.state.glossary || this.state.evidence) return;
+      const center = (document.documentElement.clientHeight || 800) * 0.5;
+      let best=0, bestDist=Infinity;
+      document.querySelectorAll('[data-idx]').forEach(el=>{
+        const r = el.getBoundingClientRect();
+        const c = r.top + r.height/2;
+        const d = Math.abs(c - center);
+        if(d < bestDist){ bestDist = d; best = parseInt(el.getAttribute('data-idx'),10); }
+      });
+      if(!isNaN(best) && best!==this.state.active) this.setState({active:best});
+    };
+    // Real browsers: scroll events fire and give instant response.
+    document.addEventListener('scroll', this._compute, {passive:true, capture:true});
+    window.addEventListener('scroll', this._compute, {passive:true});
+    // Fallback poll for environments where scroll events are suppressed.
+    this._poll = setInterval(this._compute, 100);
+  }
+  componentWillUnmount(){
+    if(this._poll) clearInterval(this._poll);
+    if(this._compute){ document.removeEventListener('scroll', this._compute, {capture:true}); window.removeEventListener('scroll', this._compute); }
+    this.teardownWave();
+  }
+  componentDidUpdate(){ this.syncWave(); }
+
+  // ---- content model ----
+  sections(){
+    return [
+      { key:'hook', num:'01', title:'A wetland too big to listen to', stage:'hook',
+        steps:[
+          { main:'The Pantanal is the world\u2019s largest tropical wetland, a living instrument of bird, frog, insect, and mammal calls. Recorders can capture it around the clock.',
+            further:'Passive acoustic monitoring (PAM) lets a handful of devices survey biodiversity continuously across an area no field team could cover by ear.',
+            ev:{t:'interpret', s:'Introduction \u00b7 p.2'}, ax:'Aerial photo of the flooded Pantanal with the framing question overlaid.' },
+          { main:'But recording is the easy part. A season of audio is thousands of hours, far more than any expert can annotate by hand.',
+            further:'The bottleneck is no longer collection; it is turning raw sound into species labels. That is a machine-learning problem.',
+            ev:{t:'report', s:'Introduction \u00b7 p.2'}, ax:'Text emphasising the annotation bottleneck.' },
+          { main:'So this study asks a simple question: can a general-purpose AI audio generator make the rarest species easier to detect, the ones conservation most needs to find?',
+            ev:{t:'interpret', s:'Research question \u00b7 \u00a71'}, ax:'The central research question of the paper.' }
+        ]},
+      { key:'longtail', num:'02', title:'The long tail', stage:'longtail',
+        steps:[
+          { main:'Sort every species by how many recordings it has, most to least. The result is clear: a few species have lots of audio, and a very long line of species have almost none.',
+            tech:'203 of 234 target classes have any focal audio at all; the y-axis is log because the top classes are capped near 500 while the tail bottoms out at 1.',
+            ev:{t:'report', s:'\u00a74.3 \u00b7 Fig 3 \u00b7 p.7'}, ax:'Rank\u2013frequency curve of recordings per class, log y-axis, descending from ~500 to 1.' },
+          { main:'Draw two lines at 10 and 50 recordings. Much of the tail falls below both. Those species barely have enough audio to define what they sound like.',
+            ev:{t:'report', s:'\u00a74.3 \u00b7 Fig 3'}, ax:'Threshold lines at 10 and 50 recordings cross the curve; the tail to the right falls below them.' },
+          { main:'Counting the bands makes it concrete: 18 classes have 5 or fewer recordings, and 4 classes have exactly one.',
+            further:'A class with a single recording cannot be both learned and tested \u2014 the brief forces it entirely into validation, so the model never trains on it.',
+            tech:'Rarity bands (Table 3): =1 \u2192 4 classes, \u22645 \u2192 18, \u226410 \u2192 27, \u226425 \u2192 40, \u226450 \u2192 52, \u2264100 \u2192 83.',
+            ev:{t:'report', s:'\u00a74.3 \u00b7 Table 3 \u00b7 p.7'}, ax:'Cumulative rarity bands shown as bars: 4, 18, 27, 40, 52, 83 classes.' },
+          { main:'This chart counts data, not errors. Having few recordings does not always mean the model does badly on a species. It just means the model has little to learn from. Whether that scarcity turns into real mistakes is the question the rest of the results will answer.',
+            ev:{t:'limit', s:'Reading note'}, ax:'Caveat: the long tail is a measure of data scarcity, not model error.' }
+        ]},
+      { key:'domain', num:'03', title:'Trained clean, tested messy', stage:'domain',
+        steps:[
+          { main:'The training clips are \u201cfocal\u201d recordings: one animal, close to the microphone, relatively clean. The deployment audio is a \u201csoundscape\u201d: many calls at once, over wind, water and insects.',
+            ev:{t:'report', s:'\u00a74.5 \u00b7 Fig 6 \u00b7 p.9'}, ax:'Two spectrograms side by side: a clean focal call versus a dense, noisy soundscape.' },
+          { main:'That gap between training and deployment conditions has a name: domain shift. A model can ace clean clips and still stumble on the real thing.',
+            tech:'A log-mel spectrogram turns sound into an image \u2014 time on x, mel-frequency on y, loudness as colour. The soundscape\u2019s energy is smeared across the whole image.',
+            ev:{t:'report', s:'\u00a74.5'}, ax:'Definition of domain shift as the mismatch between clean training audio and messy field audio.' },
+          { main:'Worse, the data barely comes from the target place. Only about 2% of focal recordings fall inside the Pantanal itself.',
+            ev:{t:'report', s:'\u00a74.5 \u00b7 Fig 5 \u00b7 p.9'}, ax:'World map of focal-recording locations; roughly 2% lie within the Pantanal box.' }
+        ]},
+      { key:'taxa', num:'04', title:'Scarcity has a taxonomy', stage:'taxa',
+        steps:[
+          { main:'The 234 classes are not evenly split across animal groups. Birds dominate the target list; amphibians, insects, mammals and a lone reptile trail far behind.',
+            tech:'Taxonomic composition (Fig 2): Aves 162, Amphibia 35, Insecta 28, Mammalia 8, Reptilia 1.',
+            ev:{t:'report', s:'\u00a74.2 \u00b7 Fig 2 \u00b7 p.6'}, ax:'Horizontal bars of class counts per taxon: Aves 162, Amphibia 35, Insecta 28, Mammalia 8, Reptilia 1.' },
+          { main:'And it is not just how many classes \u2014 it is how much audio each gets. Birds have a median of 168 recordings per class; amphibians and mammals around 7.',
+            tech:'Per-taxon median recordings (Table 4): Aves 168, Insecta 31, Mammalia 7.5, Amphibia 7, Reptilia 1.',
+            ev:{t:'report', s:'\u00a74.4 \u00b7 Fig 4 \u00b7 Table 4 \u00b7 p.8'}, ax:'Median recordings per class by taxon on a log scale: birds far above the rest.' },
+          { main:'Here is the trap. The scarcest taxa are also the furthest from what BirdNET \u2014 a bird classifier \u2014 was trained to recognise. Where we have least data, our pretrained model also knows least.',
+            ev:{t:'interpret', s:'\u00a74.4'}, ax:'The taxa with least data are also least familiar to a bird-trained model.' }
+        ]},
+      { key:'idea', num:'05', title:'Manufacture the missing data', stage:'idea',
+        steps:[
+          { main:'The central idea: if a class has too few real recordings, generate more. Feed a text description into AudioLDM 2, a text-to-audio diffusion model, and it produces a candidate clip.',
+            tech:'Prompt template per class, e.g. \u201ca natural field recording of a Spot-tailed Nightjar bird call.\u201d AudioLDM 2 is an off-the-shelf generative model, not trained on this dataset.',
+            ev:{t:'report', s:'\u00a73.4 \u00b7 \u00a75.4 \u00b7 p.12'}, ax:'A text prompt flows into the AudioLDM 2 model and out comes a candidate audio clip.' },
+          { main:'But a generator can hallucinate. So every clip faces a gate: does BirdNET recognise it as the right kind of sound? Only clips that pass become training data.',
+            ev:{t:'interpret', s:'\u00a75.4 \u00b7 Fig 10'}, ax:'A BirdNET verification gate decides whether each generated clip is kept or discarded.' }
+        ]},
+      { key:'matrix', num:'06', title:'A 2\u00d72 to isolate the cause', stage:'matrix',
+        steps:[
+          { main:'To know whether any gain comes from the model or from the synthetic data, the study crosses two axes into four conditions.',
+            tech:'Axis 1 \u2014 model: (A) frozen BirdNET embeddings + logistic regression, (B) fine-tuned EfficientNet-b0 on spectrograms. Axis 2 \u2014 data: (1) original only, (2) original + AudioLDM 2 audio.',
+            ev:{t:'report', s:'\u00a72 \u00b7 Table 1 \u00b7 p.3'}, ax:'A 2\u00d72 grid: rows are data condition, columns are model family, four cells A1 A2 B1 B2.' },
+          { main:'Read down a column and only the data changes \u2014 that isolates the effect of synthetic audio. Read across a row and only the model changes. The corner cell, B2, has both.',
+            ev:{t:'interpret', s:'Table 1'}, ax:'Columns isolate the data effect; rows isolate the model effect.' }
+        ]},
+      { key:'pipeline', num:'07', title:'How a sound becomes a guess', stage:'pipeline',
+        steps:[
+          { main:'Path A keeps BirdNET frozen: slice 5 seconds of audio, push it through the network once, and read off a 1024-number embedding. A small logistic-regression head turns that into species scores.',
+            tech:'A1/B1 \u2248 229.6k trainable parameters \u2014 only the per-class linear head is learned. The backbone never changes (Table 12).',
+            ev:{t:'report', s:'\u00a75.1\u2013\u00a75.2 \u00b7 Fig 8 \u00b7 p.10'}, ax:'Pipeline A: audio \u2192 5s window \u2192 frozen BirdNET \u2192 1024-d embedding \u2192 logistic regression \u2192 scores.' },
+          { main:'Path B treats the sound as a picture: render a 224\u00d7224 log-mel spectrogram and fine-tune an EfficientNet-b0 image network end to end.',
+            tech:'A2/B2 \u2248 5.3M parameters; AdamW, lr 1e-3, 12 epochs, batch 64, mixup \u03b1=0.15, SpecAugment (Tables 13\u201314).',
+            ev:{t:'report', s:'\u00a75.3 \u00b7 Fig 9 \u00b7 p.11'}, ax:'Pipeline B: audio \u2192 log-mel 224\u00d7224 \u2192 fine-tuned EfficientNet-b0 \u2192 BCE head \u2192 scores.' },
+          { main:'The synthetic data has its own pipeline: generate per class, verify with BirdNET, keep the passes, discard the rest. 800 clips survived to join the training pools.',
+            ev:{t:'report', s:'\u00a75.4\u2013\u00a75.5 \u00b7 Fig 10 \u00b7 p.12'}, ax:'Generate-then-verify pipeline with a keep branch (800 clips) and a discard branch.' }
+        ]},
+      { key:'filter', num:'08', title:'What passed the filter', stage:'filter',
+        steps:[
+          { main:'The gate is strict. Of 3,484 generated clips, only 800 \u2014 23% \u2014 passed BirdNET verification overall.',
+            ev:{t:'report', s:'\u00a76 \u00b7 Table 7 \u00b7 p.15'}, ax:'Overall keep-rate of generated clips: 23%, 800 of 3,484.' },
+          { main:'But the keep-rate splits sharply by taxon. Insects and the reptile passed easily; amphibians and mammals barely; and birds \u2014 0.0%. Not a single generated bird clip was kept.',
+            tech:'Keep-rate by taxon (Table 7): Reptilia 78.1%, Insecta 67.9%, Amphibia 7.3%, Mammalia 6.4%, Aves 0.0%. BirdNET-covered species: 0.0%.',
+            ev:{t:'report', s:'Table 7'}, ax:'Keep-rate bars: Reptilia 78.1, Insecta 67.9, Amphibia 7.3, Mammalia 6.4, Aves 0.0 percent.' },
+          { main:'There is an irony here: the verifier rejects exactly the audio it knows best. BirdNET is a bird model, so it holds generated bird calls to a standard the generator can\u2019t meet \u2014 while waving through taxa it judges loosely.',
+            ev:{t:'limit', s:'\u00a77.3 (author-stated)'}, ax:'The filter is itself taxon-biased: it is strictest where it is most expert.' }
+        ]},
+      { key:'result', num:'09', title:'The headline number', stage:'result',
+        steps:[
+          { main:'Now the scores. The primary metric is macro-AUC \u2014 ranking quality averaged equally across classes, so a rare species counts as much as a common one. Higher is better; 1.0 is perfect.',
+            ev:{t:'report', s:'\u00a76 \u00b7 Table 5\u20136 \u00b7 p.14'}, ax:'Macro-AUC defined as the primary metric, equal weight per class.' },
+          { main:'Both synthetic-data cells beat their originals. Adding generated audio lifts the frozen model from 0.9429 to 0.9463, and the fine-tuned model from 0.9465 to 0.9549.',
+            tech:'\u0394 from synthetic data: +0.0034 (frozen, A1\u2192B1) and +0.0084 (fine-tuned, A2\u2192B2).',
+            ev:{t:'report', s:'Table 6 \u00b7 p.14'}, ax:'Both data-augmented cells score higher than their originals.' },
+          { main:'The best cell is B2 \u2014 fine-tuned model, with synthetic audio \u2014 at 0.9549. The gains are small but consistent in the direction generative augmentation was supposed to help.',
+            ev:{t:'report', s:'Table 6'}, ax:'B2, fine-tuned plus synthetic audio, is the best cell at 0.9549.' }
+        ]},
+      { key:'benefit', num:'10', title:'Where the benefit lives', stage:'benefit',
+        steps:[
+          { main:'An average hides the story. Break the gain down by how much data a class had, and the benefit is not spread evenly \u2014 it pools in the rarest classes.',
+            ev:{t:'report', s:'\u00a76 \u00b7 Table 8 \u00b7 Fig 15 \u00b7 p.15,31'}, ax:'Per-class AUC by support band, comparing baseline A1 with best B2.' },
+          { main:'At the very bottom \u2014 classes with 5 or fewer examples \u2014 mean per-class AUC jumps from 0.666 to 0.890. That is where manufactured data does real work.',
+            tech:'\u22645 band: A1 0.666, B1 0.754, B2 0.890. \u226410 band: 0.764 / 0.825 / 0.918. Across all 203 classes the gap shrinks to 0.9429 \u2192 0.9549.',
+            ev:{t:'report', s:'Table 8'}, ax:'In the \u22645 band, AUC rises from 0.666 to 0.890; the gap shrinks for well-populated bands.' },
+          { main:'And it lives where the clips were actually kept. Amphibians \u2014 which received synthetic audio \u2014 climb from 0.860 to 0.951. Birds, which got none, stay essentially flat near 0.96.',
+            tech:'Per-taxon AUC A1/B1/B2 (Table 9): Aves .960/.960/.959, Amphibia .860/.897/.951, Insecta .994/.994/.968, Mammalia .890/.856/.903, Reptilia .850/.669/.801.',
+            ev:{t:'report', s:'Table 9 \u00b7 p.16'}, ax:'Amphibians gain most; birds are flat; the benefit tracks where clips passed the filter.' }
+        ]},
+      { key:'tradeoff', num:'11', title:'A hidden trade-off', stage:'tradeoff',
+        steps:[
+          { main:'One metric can mislead. The fine-tuned cells rank classes better (macro-AUC) but pick the single top label worse (top-1 accuracy).',
+            ev:{t:'report', s:'\u00a76 \u00b7 Table 10 \u00b7 p.16'}, ax:'Two metrics side by side: macro-AUC versus top-1 accuracy for the four cells.' },
+          { main:'Frozen A1 ranks at 0.9429 but tops out at 0.789 top-1 \u2014 the best single-label accuracy. Fine-tuned B2 ranks highest at 0.9549 yet drops to 0.669 top-1.',
+            tech:'Macro-AUC / top-1 (Table 10): A1 .9429/.789, A2 .9465/.646, B1 .9463/.796, B2 .9549/.669.',
+            ev:{t:'report', s:'Table 10'}, ax:'A1 has the best top-1 accuracy; B2 has the best macro-AUC but lower top-1.' },
+          { main:'So \u201cbest\u201d depends on the job. A better ranker surfaces more rare species in a review list; a better top-1 classifier makes a more confident single call. They are not the same model.',
+            ev:{t:'interpret', s:'\u00a76'}, ax:'Ranking quality and single-label accuracy are different goals served by different cells.' }
+        ]},
+      { key:'meaning', num:'12', title:'What it does \u2014 and doesn\u2019t \u2014 show', stage:'meaning',
+        steps:[
+          { main:'The honest reading: generative AI helped here, conditionally. It worked where a class was scarce AND the generator could make audio that passed verification.',
+            ev:{t:'interpret', s:'\u00a77.2'}, ax:'Generative augmentation helps conditionally, not universally.' },
+          { main:'Four cautions travel with that claim, and the authors state them: the kept clips skew by taxon; the filter only verifies taxa BirdNET covers; single-example classes can\u2019t be rescued; and the headline metric never tested the soundscape shift.',
+            tech:'Some cited sources are preprints (\u00a77.3). The evaluation uses focal-style validation, so the focal\u2192soundscape domain gap from \u00a73 is not directly measured by macro-AUC.',
+            ev:{t:'limit', s:'\u00a77.3 (author-stated)'}, ax:'Four author-stated limitations bound the conclusion.' }
+        ]},
+      { key:'synthesis', num:'13', title:'What to remember', stage:'synthesis',
+        steps:[
+          { main:'Pulling the thread together: synthetic audio is a targeted tool, not a cure. Used with a verification gate, it lifts exactly the classes that need it most \u2014 when the generator can serve them.',
+            ev:{t:'interpret', s:'\u00a78'}, ax:'Closing synthesis of the four takeaways.' }
+        ]}
+    ];
+  }
+  flat(){ const out=[]; this.sections().forEach((s,si)=>s.steps.forEach((st,li)=>out.push(Object.assign({},st,{sectionKey:s.key,si,li,nSteps:s.steps.length,secTitle:s.title,num:s.num})))); return out; }
+
+  // ---- helpers ----
+  trans(extra){ return this.state.reduced ? 'none' : (extra||'all .5s cubic-bezier(.2,.7,.2,1)'); }
+  go(id){ const el=document.getElementById(id); if(!el) return; const top=el.getBoundingClientRect().top+window.scrollY-70; window.scrollTo({top, behavior:this.state.reduced?'auto':'smooth'}); }
+  toggleExp(k){ const e=Object.assign({}, this.state.expanded); e[k]=!this.expOpen(k); this.setState({expanded:e}); }
+  expOpen(k){ const v=this.state.expanded[k]; if(v!==undefined) return v; const lvl=this.state.level; if(k.endsWith('|further')) return lvl>=1; if(k.endsWith('|tech')) return lvl>=3; return false; }
+
+  // ================= STAGE =================
+  renderStage(){
+    const steps=this.flat(); const st=steps[this.state.active]||steps[0];
+    const key=st.sectionKey; const reveal=st.li;
+    const map={ hook:'stHook', longtail:'stLong', domain:'stDomain', taxa:'stTaxa', idea:'stIdea',
+      matrix:'stMatrix', pipeline:'stPipe', filter:'stFilter', result:'stResult', benefit:'stBenefit',
+      tradeoff:'stTrade', meaning:'stMeaning', synthesis:'stSynth' };
+    const node=this[map[key]] ? this[map[key]](reveal) : null;
+    return h('div',{key:key, style:{width:'100%',height:'100%',animation:this.state.reduced?'none':'fadeUp .45s ease'}}, node);
+  }
+  stageCaption(txt, fig){ return h('div',{style:{position:'absolute',left:0,right:0,bottom:0,padding:'14px 22px',background:'linear-gradient(transparent,rgba(20,25,20,.04))',fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.mut,letterSpacing:'.02em',display:'flex',justifyContent:'space-between',gap:12}},
+    h('span',{}, txt), fig?h('span',{style:{color:C.faint}}, fig):null); }
+  panel(children, extra){ return h('div',{style:Object.assign({position:'relative',width:'100%',height:'100%',display:'flex',flexDirection:'column',padding:'34px 38px',background:C.panel},extra||{})}, children); }
+  stageTitle(t,sub){ return h('div',{style:{marginBottom:18}},
+    h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,letterSpacing:'.16em',textTransform:'uppercase',color:C.tealL}}, sub||'Figure'),
+    h('div',{style:{fontFamily:'Fraunces,serif',fontSize:23,fontWeight:600,color:C.ink,marginTop:4}}, t)); }
+
+  stHook(){
+    return h('div',{style:{position:'relative',width:'100%',height:'100%',overflow:'hidden',background:'#0d1410'}},
+      h('img',{src:'assets/fig01-pantanal.jpg',alt:'Aerial photograph of the flooded Pantanal wetland',style:{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:.92,transform:this.state.reduced?'none':'scale(1.04)',transition:this.state.reduced?'none':'transform 14s ease'}}),
+      h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(8,14,10,.15),rgba(8,14,10,.78))'}}),
+      h('div',{style:{position:'absolute',left:0,right:0,bottom:0,padding:'48px 44px'}},
+        h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,letterSpacing:'.18em',color:'#9fc4b6',textTransform:'uppercase',marginBottom:14}},'The Pantanal \u00b7 Fig 1'),
+        h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:500,fontSize:30,lineHeight:1.28,color:'#f4eddd',maxWidth:560,textWrap:'pretty'}},'Can an AI audio generator make a wetland\u2019s rarest species easier to detect, the species conservation most needs to find?')));
+  }
+
+  axisBox(children){ return h('div',{style:{position:'relative',flex:1,background:C.card,border:'1px solid '+C.line,borderRadius:3,padding:'18px 20px',minHeight:0}}, children); }
+
+  stLong(reveal){
+    const W=560,H=320,pl=52,pr=24,pt=18,pb=40;
+    const x=r=>pl+(r/203)*(W-pl-pr);
+    const ly=v=>{ const lv=Math.log10(Math.max(v,1)); return pt+(1-(lv/Math.log10(600)))*(H-pt-pb); };
+    const anchors=[[0,500],[18,470],[45,300],[90,150],[120,100],[151,50],[163,25],[176,10],[185,5],[195,2],[203,1]];
+    const path=anchors.map((a,i)=>(i?'L':'M')+x(a[0]).toFixed(1)+' '+ly(a[1]).toFixed(1)).join(' ');
+    const gridY=[1,10,100,500];
+    const showCurve=reveal>=0, showThresh=reveal>=1, showShade=reveal>=2 || reveal>=3, showCall=reveal>=2;
+    // rarity bands chart on step 3 (li index 2 has table content) -> show bands when reveal>=2
+    return this.panel([
+      this.stageTitle('Recordings per class, ranked','Fig 3 \u00b7 the long tail'),
+      this.axisBox(h('svg',{viewBox:'0 0 '+W+' '+H,style:{width:'100%',height:'100%'}},
+        gridY.map(g=>h('g',{key:'g'+g},
+          h('line',{x1:pl,x2:W-pr,y1:ly(g),y2:ly(g),stroke:C.line2}),
+          h('text',{x:pl-8,y:ly(g)+3,textAnchor:'end',fontSize:10,fill:C.mut,fontFamily:"'Libre Franklin',sans-serif"}, g))),
+        h('text',{x:pl-38,y:H/2,fontSize:10,fill:C.mut,transform:'rotate(-90 '+(pl-38)+' '+(H/2)+')',textAnchor:'middle',fontFamily:"'Libre Franklin',sans-serif"},'recordings (log)'),
+        h('text',{x:(W)/2,y:H-6,fontSize:10,fill:C.mut,textAnchor:'middle',fontFamily:"'Libre Franklin',sans-serif"},'class rank \u2192'),
+        showShade?h('rect',{x:x(151),y:pt,width:x(203)-x(151),height:H-pt-pb,fill:C.amber,opacity:.10}):null,
+        showThresh?[50,10].map(t=>h('g',{key:'t'+t},
+          h('line',{x1:pl,x2:W-pr,y1:ly(t),y2:ly(t),stroke:t===10?C.rust:C.amber,strokeDasharray:'5 4',strokeWidth:1.4}),
+          h('text',{x:W-pr,y:ly(t)-5,textAnchor:'end',fontSize:9.5,fill:t===10?C.rust:'#8a5f15',fontFamily:"'Libre Franklin',sans-serif"}, t+'-recording line'))):null,
+        showCurve?h('path',{d:path,fill:'none',stroke:C.teal,strokeWidth:2.4,strokeLinejoin:'round',style:this.state.reduced?{}:{strokeDasharray:1400,strokeDashoffset:0,animation:'drawIn .9s ease'}}):null,
+        showCall?h('g',{},
+          h('circle',{cx:x(185),cy:ly(5),r:4,fill:C.amber}),
+          h('text',{x:x(185)-6,y:ly(5)-8,textAnchor:'end',fontSize:10.5,fontWeight:600,fill:C.sub,fontFamily:'Libre Franklin'},'18 classes \u2264 5'),
+          h('circle',{cx:x(201),cy:ly(1),r:4,fill:C.rust}),
+          h('text',{x:x(201)-6,y:ly(1)-8,textAnchor:'end',fontSize:10.5,fontWeight:600,fill:C.rust,fontFamily:'Libre Franklin'},'4 classes = 1')):null
+      )),
+      reveal>=2 ? h('div',{style:{marginTop:14}}, this.bandBars()) : h('div',{style:{marginTop:14,height:1}}),
+      this.miniNote('Recreated from Fig 3 (p.7). A count of available data, not of model error.')
+    ]);
+  }
+  bandBars(){
+    const bands=[['= 1',4,C.rust],['\u2264 5',18,C.amber],['\u2264 10',27,C.amber],['\u2264 25',40,C.tealL],['\u2264 50',52,C.tealL],['\u2264 100',83,C.teal]];
+    const max=83;
+    return h('div',{style:{display:'grid',gridTemplateColumns:'auto 1fr auto',gap:'4px 10px',alignItems:'center',fontFamily:'Libre Franklin',fontSize:11.5}},
+      bands.map((b,i)=>[
+        h('div',{key:'l'+i,style:{textAlign:'right',color:C.mut,fontFamily:"'Libre Franklin',sans-serif"}}, b[0]),
+        h('div',{key:'b'+i,style:{height:13,background:C.line2,borderRadius:2,overflow:'hidden'}},
+          h('div',{style:{height:'100%',width:(b[1]/max*100)+'%',background:b[2],transition:this.trans()}})),
+        h('div',{key:'v'+i,style:{color:C.sub,fontWeight:600,minWidth:22}}, b[1])
+      ]));
+  }
+  miniNote(t){ return h('div',{style:{marginTop:'auto',paddingTop:10,borderTop:'1px solid '+C.amber+'55',fontFamily:'Libre Franklin,sans-serif',fontSize:9.5,letterSpacing:'.07em',textTransform:'uppercase',color:C.faint}}, t); }
+
+  // ---------- domain-shift focal vs soundscape comparator ----------
+  animals(){
+    return [
+      { slug:'weeping-frog', common:'Weeping Frog', sci:'Physalaemus biligonigerus', taxon:'Amphibia', color:C.tealL,
+        photo:'assets/animals/weeping-frog.jpg', photoCredit:'Gagea, CC BY-SA 3.0, via Wikimedia Commons',
+        blurb:'A short, plaintive whine \u2014 clean and isolated on its own.',
+        size:'~3\u20134 cm body',
+        range:'Grasslands and savanna of central South America \u2014 Argentina, Bolivia, Paraguay, Brazil and Uruguay, including the Pantanal margins.',
+        habitat:'Open, low ground near temporary rain pools, where it shelters under leaf litter and emerges to breed after heavy rain.',
+        call:'A long, falling, plaintive whine \u2014 the \u201cweeping\u201d that gives the frog its name. In a focal clip it is a single clean tone, easy for a model to latch onto.',
+        why:'Out in a soundscape this thin whine sits low and quiet, overlapped by insects and other frogs and easily lost to wind \u2014 a clear example of how a learnable focal call degrades in the field.' },
+      { slug:'whistling-grass-frog', common:'Whistling Grass Frog', sci:'Leptodactylus fuscus', taxon:'Amphibia', color:C.tealL,
+        photo:'assets/animals/whistling-grass-frog.jpg', photoCredit:'Axel Kwet, CC BY-SA 2.5, via Wikimedia Commons',
+        blurb:'A clear descending whistle \u2014 a sharp, learnable shape on its own.',
+        size:'~4\u20135 cm body',
+        range:'One of the most widespread Neotropical frogs, from Panama south through the Chaco and Pantanal into northern Argentina.',
+        habitat:'Open and disturbed ground \u2014 grassland, pasture and roadside ditches \u2014 where males call from burrows beside foam nests built for their eggs.',
+        call:'A single clear, descending whistle, repeated at intervals. Its sharp, distinctive shape makes it one of the more learnable amphibian calls in a clean clip.',
+        why:'Even a crisp whistle competes with a full chorus at dusk; many overlapping callers turn a tidy focal recording into a dense, ambiguous field signal.' },
+      { slug:'hooded-capuchin', common:'Hooded Capuchin', sci:'Sapajus cay', taxon:'Mammalia', color:C.rust,
+        photo:'assets/animals/hooded-capuchin.jpg', photoCredit:'Bernard DUPONT, CC BY-SA 2.0, via Wikimedia Commons',
+        blurb:'A scarce mammal call \u2014 infrequent and easily buried under wind and water.',
+        size:'~35\u201345 cm body, plus tail',
+        range:'Gallery and dry forests of Paraguay, Bolivia, northern Argentina and south-western Brazil.',
+        habitat:'Lives high in the forest canopy in noisy social troops; a clever, tool-using monkey that moves and calls in bursts rather than continuously.',
+        call:'A varied repertoire of whistles, barks and trills used to coordinate the troop \u2014 far less stereotyped than a frog or bird call, and only made now and then.',
+        why:'Mammals are the scarce, hard end of this dataset: few recordings, irregular calls and a sound the bird-trained BirdNET has barely seen \u2014 exactly where extra training examples are most needed.' },
+      { slug:'chaco-chachalaca', common:'Chaco Chachalaca', sci:'Ortalis canicollis', taxon:'Aves', color:C.teal,
+        photo:'assets/animals/chaco-chachalaca.jpg', photoCredit:'Charles J. Sharp, CC BY-SA 4.0, via Wikimedia Commons',
+        blurb:'A raucous, far-carrying chorus \u2014 overlaps heavily with other birds in the field.',
+        size:'~50\u201356 cm long',
+        range:'A signature bird of the Gran Chaco \u2014 Paraguay, Bolivia, northern Argentina and the Brazilian Pantanal.',
+        habitat:'A chicken-like, ground-and-shrub bird of dry forest and thorn scrub, moving in noisy family parties.',
+        call:'A raucous, far-carrying \u201ccha-cha-lac\u201d chorus, usually at dawn, with several birds answering at once \u2014 loud and unmistakable, but rarely a single clean voice.',
+        why:'This is BirdNET\u2019s home turf \u2014 a bird \u2014 yet its overlapping group calls show how even a strong species smears together in the field when many individuals sound off together.' },
+      { slug:'great-kiskadee', common:'Great Kiskadee', sci:'Pitangus sulphuratus', taxon:'Aves', color:C.teal,
+        photo:'assets/animals/great-kiskadee.jpg', photoCredit:'Gregory \u201cSlobirdr\u201d Smith, CC BY-SA 2.0, via Wikimedia Commons',
+        blurb:'A loud three-note \u201ckis-ka-dee\u201d \u2014 distinctive, but one voice among many.',
+        size:'~22 cm long',
+        range:'One of the most familiar birds of the Americas, from the southern US through Central America to Argentina.',
+        habitat:'A bold, conspicuous tyrant flycatcher \u2014 bright yellow belly, black-and-white striped head \u2014 common near water, open country and even towns.',
+        call:'A loud, emphatic three-note \u201ckis-ka-dee\u201d that names the bird, plus harsher chatter. Distinctive enough to recognise even in a busy mix.',
+        why:'Even a loud, distinctive call is just one voice in a dawn soundscape; clean training clips never capture the constant overlap a field recorder hears all at once.' }
+    ];
+  }
+  curAnimal(){ const a=this.animals(); return a.find(x=>x.slug===this.state.domainAnimal)||a[0]; }
+
+  refFor(k){ if(!this._refs[k]) this._refs[k]=(el)=>{ if(el) this.waveEls[k]=el; else delete this.waveEls[k]; }; return this._refs[k]; }
+  fmt(s){ if(!isFinite(s)||s<0) s=0; const m=Math.floor(s/60); const ss=Math.floor(s%60); return m+':' + (ss<10?'0':'') + ss; }
+  setTimeEl(which, kind, secs){ const el=this.waveEls[which+'-'+kind]; if(el) el.textContent=this.fmt(secs); }
+  setIcon(which, playing){ const el=this.waveEls[which+'-icon']; if(!el) return;
+    el.innerHTML = playing
+      ? '<svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><rect x="2" y="1.5" width="3" height="10" rx="1" fill="#fff"/><rect x="8" y="1.5" width="3" height="10" rx="1" fill="#fff"/></svg>'
+      : '<svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><path d="M3 1.5 L11 6.5 L3 11.5 Z" fill="#fff"/></svg>'; }
+  setBtnLabel(which, playing){ const b=this.waveEls[which+'-btn']; if(b){ const a=this.curAnimal(); b.setAttribute('aria-label', (playing?'Pause ':'Play ')+(which==='focal'?'focal':'soundscape')+' recording of '+a.common); } }
+  showWaveError(which, on){ const ph=this.waveEls[which+'-ph']; const wv=this.waveEls[which+'-wave']; if(ph) ph.style.display=on?'flex':'none'; if(wv) wv.style.visibility=on?'hidden':'visible'; }
+
+  syncWave(){
+    const steps=this.flat(); const st=steps[this.state.active]||steps[0];
+    const inDomain = st.sectionKey==='domain' && !this.state.staticMode;
+    if(!inDomain){ this.teardownWave(); return; }
+    if(typeof WaveSurfer==='undefined'){ clearTimeout(this._waveRetry); this._waveRetry=setTimeout(()=>this.syncWave(),250); return; }
+    if(!this.waveEls['focal-wave'] || !this.waveEls['soundscape-wave']){ clearTimeout(this._waveRetry); this._waveRetry=setTimeout(()=>this.syncWave(),120); return; }
+    if(this.waveLoaded===this.state.domainAnimal && this.wave.focal && this.wave.soundscape) return;
+    this.buildWaveFor(this.state.domainAnimal);
+  }
+  teardownWave(){
+    ['focal','soundscape'].forEach(w=>{ const ws=this.wave[w]; if(ws){ try{ ws.pause(); }catch(e){} try{ ws.destroy(); }catch(e){} } this.wave[w]=null; });
+    this.waveLoaded=null; this.wavePlaying=null;
+  }
+  buildWaveFor(slug){
+    this.teardownWave();
+    this.waveLoaded=slug;
+    const base='assets/audio/'+slug;
+    this.wave.focal = this.makeWave(this.waveEls['focal-wave'], base+'-focal', C.teal, C.tealL, 'focal');
+    this.wave.soundscape = this.makeWave(this.waveEls['soundscape-wave'], base+'-soundscape', C.rust, C.amber, 'soundscape');
+    ['focal','soundscape'].forEach(w=>{ this.setTimeEl(w,'cur',0); this.setTimeEl(w,'dur',0); this.setIcon(w,false); this.setBtnLabel(w,false); this.showWaveError(w,false); });
+  }
+  makeWave(container, urlBase, waveColor, progColor, which){
+    if(!container) return null;
+    let ws;
+    try {
+      ws = WaveSurfer.create({ container, height:44, waveColor, progressColor:progColor,
+        cursorColor:C.ink, cursorWidth:1, barWidth:2, barGap:1.5, barRadius:2, normalize:true, interact:true, url:urlBase+'.ogg' });
+    } catch(e){ this.showWaveError(which,true); return null; }
+    let triedMp3=false;
+    ws.on('error', ()=>{ if(!triedMp3){ triedMp3=true; try{ ws.load(urlBase+'.mp3'); }catch(e){ this.showWaveError(which,true); } } else { this.showWaveError(which,true); } });
+    ws.on('ready', ()=>{ this.showWaveError(which,false); this.setTimeEl(which,'dur', ws.getDuration()); this.setTimeEl(which,'cur',0); });
+    ws.on('timeupdate', (t)=>{ this.setTimeEl(which,'cur', t); });
+    ws.on('finish', ()=>{ this.wavePlaying=null; this.setIcon(which,false); this.setBtnLabel(which,false); });
+    ws.on('play', ()=>{ const other=which==='focal'?'soundscape':'focal'; const o=this.wave[other];
+      if(o && o.isPlaying && o.isPlaying()) o.pause();
+      this.wavePlaying=which; this.setIcon(which,true); this.setBtnLabel(which,true); });
+    ws.on('pause', ()=>{ this.setIcon(which,false); this.setBtnLabel(which,false); if(this.wavePlaying===which) this.wavePlaying=null; });
+    return ws;
+  }
+  toggleWave(which){ const ws=this.wave[which]; if(ws){ try{ ws.playPause(); }catch(e){} } }
+  pauseAllWave(){ ['focal','soundscape'].forEach(w=>{ const ws=this.wave[w]; if(ws && ws.isPlaying && ws.isPlaying()){ try{ ws.pause(); }catch(e){} } }); }
+  selectAnimal(slug){ if(slug===this.state.domainAnimal) return; this.pauseAllWave(); this.teardownWave(); this.setState({domainAnimal:slug}); }
+
+  playerCard(which, label, btnColor, a){
+    const isFocal = which==='focal';
+    return h('div',{style:{background:C.card,border:'1px solid '+C.line,borderRadius:8,padding:'12px 14px',boxShadow:'0 4px 16px rgba(0,0,0,.06)'}},
+      h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:9}},
+        h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,letterSpacing:'.12em',color:isFocal?C.teal:C.rust}}, label),
+        h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.mut}},
+          h('span',{ref:this.refFor(which+'-cur')}, '0:00'), h('span',{style:{color:C.faint,margin:'0 3px'}},'/'), h('span',{ref:this.refFor(which+'-dur')}, '0:00'))),
+      h('div',{style:{display:'flex',alignItems:'center',gap:12}},
+        h('button',{ref:this.refFor(which+'-btn'),onClick:()=>this.toggleWave(which),'aria-label':(isFocal?'Play focal':'Play soundscape')+' recording of '+a.common,
+          style:{flexShrink:0,width:38,height:38,borderRadius:'50%',border:'none',background:btnColor,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:this.trans()}},
+          h('span',{ref:this.refFor(which+'-icon'),style:{display:'flex',marginLeft:isFocal?1:1},dangerouslySetInnerHTML:{__html:'<svg width=\"13\" height=\"13\" viewBox=\"0 0 13 13\" aria-hidden=\"true\"><path d=\"M3 1.5 L11 6.5 L3 11.5 Z\" fill=\"#fff\"/></svg>'}})),
+        h('div',{style:{position:'relative',flex:1,minWidth:0}},
+          h('div',{ref:this.refFor(which+'-wave'),style:{width:'100%'}}),
+          h('div',{ref:this.refFor(which+'-ph'),style:{display:'none',position:'absolute',inset:0,alignItems:'center',gap:3}},
+            [10,18,28,20,34,24,14,30,22,12,26,16,32,18,10].map((hh,i)=>h('div',{key:i,style:{flex:1,height:hh,background:C.line,borderRadius:2}}))) )));
+  }
+
+  stDomain(reveal){
+    const a=this.curAnimal();
+    const animals=this.animals();
+    const summary='For the '+a.common+', the focal recording isolates a single clean call, while the soundscape places the same kind of call amid overlapping voices, wind and water \u2014 the domain shift the model must bridge between training and deployment.';
+    return this.panel([
+      this.stageTitle('Clean training vs messy deployment','Fig 6 \u00b7 domain shift'),
+      h('span',{style:{position:'absolute',width:1,height:1,overflow:'hidden',clip:'rect(0 0 0 0)'}}, summary),
+      // animal selector
+      h('div',{role:'group','aria-label':'Choose an animal','style':{display:'flex',flexWrap:'wrap',gap:7,marginBottom:14}},
+        animals.map(an=>{ const on=an.slug===this.state.domainAnimal; return h('button',{key:an.slug,onClick:()=>this.selectAnimal(an.slug),'aria-pressed':on,
+          style:{padding:'5px 11px',borderRadius:20,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:11.5,fontWeight:600,transition:this.trans(),
+            border:'1px solid '+(on?an.color:C.line), background:on?an.color:C.card, color:on?'#fff':C.sub}}, an.common); })),
+      // info strip
+      h('div',{className:this.state.reduced?'':'wsfade',key:'strip-'+a.slug,style:{display:'flex',gap:13,alignItems:'flex-start',marginBottom:6}},
+        h('button',{onClick:()=>this.setState({animalModal:a.slug}),'aria-label':'More about the '+a.common+' \u2014 opens details',title:'More about the '+a.common,
+          style:{position:'relative',padding:0,border:'none',background:'none',cursor:'pointer',flexShrink:0,borderRadius:8,lineHeight:0}},
+          this.state.photoErr[a.slug]
+            ? h('div',{'aria-hidden':true,style:{width:92,height:92,borderRadius:8,background:a.color,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:'#fff',textAlign:'center',padding:6}}, a.taxon)
+            : h('img',{src:a.photo,alt:'Photograph of a '+a.common+' ('+a.sci+')',onError:()=>{ const p=Object.assign({},this.state.photoErr); p[a.slug]=true; this.setState({photoErr:p}); },
+                style:{width:92,height:92,borderRadius:8,objectFit:'cover',border:'1px solid '+C.line,display:'block'}}),
+          h('span',{'aria-hidden':true,style:{position:'absolute',right:5,bottom:5,width:20,height:20,borderRadius:'50%',background:'rgba(20,25,20,.62)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontFamily:'Libre Franklin',fontWeight:600}},'i')),
+        h('div',{style:{minWidth:0}},
+          h('div',{style:{display:'flex',alignItems:'baseline',gap:9,flexWrap:'wrap'}},
+            h('span',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:18,color:C.ink}}, a.common),
+            h('span',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontSize:13,color:C.mut}}, a.sci)),
+          h('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'6px 0 7px'}},
+            h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',color:'#fff',background:a.color,padding:'2px 8px',borderRadius:4}}, a.taxon)),
+          h('div',{style:{fontSize:12.5,color:C.sub,lineHeight:1.45}}, a.blurb))),
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:C.faint,marginBottom:13}}, 'Photo: '+a.photoCredit),
+      // players
+      h('div',{style:{display:'flex',flexDirection:'column',gap:10}},
+        this.playerCard('focal', 'FOCAL \u00b7 ONE ANIMAL, CLEAN', C.teal, a),
+        this.playerCard('soundscape', 'SOUNDSCAPE \u00b7 SAME CALL, IN THE FIELD', C.rust, a)),
+      // callout
+      h('div',{style:{marginTop:13,padding:'11px 14px',background:C.tealBg,borderRadius:6,fontSize:12,color:C.sub,lineHeight:1.5}},
+        h('b',{style:{color:C.teal}},'Domain shift: '),'the model learns from clean, close-mic clips (top) but is aimed at noisy field recordings like this one (bottom), often recorded in a different place with many calls overlapping.'),
+      h('div',{style:{marginTop:9,fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:C.rust,display:'flex',alignItems:'center',gap:8}},
+        h('span',{style:{width:8,height:8,borderRadius:8,background:C.rust,display:'inline-block',flexShrink:0}}),
+        '\u2248 2% of focal recordings fall inside the Pantanal (Fig 5).')
+    ], {padding:'26px 30px',overflowY:'auto'});
+  }
+
+  stTaxa(reveal){
+    const comp=[['Aves',162,C.teal],['Amphibia',35,C.tealL],['Insecta',28,C.amber],['Mammalia',8,C.rust],['Reptilia',1,C.plum]];
+    const med=[['Aves',168],['Insecta',31],['Mammalia',7.5],['Amphibia',7],['Reptilia',1]];
+    const showMed=reveal>=1;
+    return this.panel([
+      this.stageTitle(showMed?'Median recordings per class':'How many classes per taxon', showMed?'Table 4 \u00b7 data per taxon':'Fig 2 \u00b7 composition'),
+      !showMed ? h('div',{style:{display:'flex',flexDirection:'column',gap:12,justifyContent:'center',flex:1}},
+          comp.map((b,i)=>h('div',{key:i,style:{display:'grid',gridTemplateColumns:'78px 1fr 40px',alignItems:'center',gap:10}},
+            h('div',{style:{fontSize:12.5,color:C.sub,fontFamily:'Fraunces,serif',fontWeight:600}},b[0]),
+            h('div',{style:{height:20,background:C.line2,borderRadius:3,overflow:'hidden'}},
+              h('div',{style:{height:'100%',width:(b[1]/162*100)+'%',background:b[2],transition:this.trans(),transitionDelay:(i*60)+'ms'}})),
+            h('div',{style:{fontWeight:600,fontSize:13,color:C.ink}},b[1]))))
+        : h('div',{style:{display:'flex',flexDirection:'column',gap:14,justifyContent:'center',flex:1}},
+          med.map((b,i)=>{ const w=Math.log10(b[1]+1)/Math.log10(170)*100; return h('div',{key:i,style:{display:'grid',gridTemplateColumns:'78px 1fr 52px',alignItems:'center',gap:10}},
+            h('div',{style:{fontSize:12.5,color:C.sub,fontFamily:'Fraunces,serif',fontWeight:600}},b[0]),
+            h('div',{style:{height:20,background:C.line2,borderRadius:3,overflow:'hidden'}},
+              h('div',{style:{height:'100%',width:w+'%',background:i===0?C.teal:C.amber,transition:this.trans()}})),
+            h('div',{style:{fontWeight:600,fontSize:13,color:C.ink,fontFamily:"'Libre Franklin',sans-serif"}},b[1])); })),
+      reveal>=2?h('div',{style:{marginTop:14,padding:'12px 14px',background:C.amberBg,borderRadius:4,fontSize:12.5,color:C.sub,lineHeight:1.5}},
+        'The scarcest taxa are also the furthest from BirdNET\u2019s bird-trained world.'):null,
+      this.miniNote('Recreated from Fig 2 (p.6) and Table 4 (p.8).')
+    ]);
+  }
+
+  stIdea(reveal){
+    const box=(t,sub,bg,bd,on)=>h('div',{style:{flex:1,padding:'16px 16px',borderRadius:6,background:bg,border:'1px solid '+bd,textAlign:'center',opacity:on?1:.25,transition:this.trans()}},
+      h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:15,color:C.ink}},t),
+      h('div',{style:{fontSize:11.5,color:C.mut,marginTop:5,lineHeight:1.4}},sub));
+    const arrow=(on)=>h('div',{style:{padding:'0 4px',color:on?C.teal:C.faint,fontSize:22,transition:this.trans()}},'\u2192');
+    return this.panel([
+      this.stageTitle('Text in, audio out \u2014 then verify','Fig 10 \u00b7 the central idea'),
+      h('div',{style:{display:'flex',alignItems:'center',gap:6,marginTop:8}},
+        box('Text prompt','\u201ca natural field recording of a Spot-tailed Nightjar bird call\u201d',C.card,C.line,true),
+        arrow(true),
+        h('button',{onClick:()=>this.setState({videoModal:{id:'_0VTltNYhao?si=t8TBu5jojXlxrfYG',label:'Text-to-audio diffusion',title:'This is AudioLDM 2 in action.',desc:'A text prompt goes in \u2014 \u201ca natural field recording of a Spot-tailed Nightjar bird call\u201d \u2014 and the model generates a candidate audio clip from scratch.'}}),title:'Watch AudioLDM 2 in action',
+          style:{flex:1,padding:'16px 16px',borderRadius:6,background:C.tealBg,border:'2px solid '+C.teal,textAlign:'center',cursor:'pointer',position:'relative',transition:this.trans(),fontFamily:'inherit',boxShadow:'0 2px 12px rgba(47,93,82,.18)'},
+          'style-hover':{transform:this.state.reduced?'none':'translateY(-2px)',boxShadow:'0 8px 22px rgba(47,93,82,.28)'}},
+          h('div',{style:{position:'absolute',top:-11,right:10,display:'inline-flex',alignItems:'center',gap:5,background:C.teal,color:'#fff',fontFamily:"'Libre Franklin',sans-serif",fontSize:10,fontWeight:600,letterSpacing:'.04em',padding:'3px 9px',borderRadius:12,boxShadow:'0 2px 8px rgba(47,93,82,.35)'}},
+            h('span',{'aria-hidden':true,style:{fontSize:9}},'\u25B6'),'WATCH'),
+          h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:15,color:C.teal}},'AudioLDM 2'),
+          h('div',{style:{fontSize:11.5,color:C.sub,marginTop:5,lineHeight:1.4}},'text-to-audio diffusion'),
+          h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.teal,marginTop:6,fontWeight:600}},'Click to watch it in action \u2192')),
+        arrow(reveal>=0),
+        box('Candidate clip','5-second generated audio',C.card,C.line,true)),
+      h('div',{style:{height:reveal>=1?'auto':0,overflow:'hidden',transition:this.trans(),marginTop:reveal>=1?22:0}},
+        reveal>=1?h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:10}},
+          h('div',{style:{color:C.faint,fontSize:20}},'\u2193'),
+          h('button',{onClick:()=>this.setState({videoModal:{id:'la88RRWZdn4?si=jqkzvBvoy4ZW2xAm',label:'The verification gate',title:'This is BirdNET in action.',desc:'Every generated clip faces BirdNET: does it recognise the sound as the right kind of species? Only the clips that pass become training data \u2014 the rest are discarded.',accent:C.amber}}),title:'Watch BirdNET in action',
+            style:{padding:'14px 22px',borderRadius:8,background:'#fff',border:'2px solid '+C.amber,textAlign:'center',cursor:'pointer',position:'relative',fontFamily:'inherit',boxShadow:'0 4px 16px rgba(189,133,38,.18)',transition:this.trans()},
+            'style-hover':{transform:this.state.reduced?'none':'translateY(-2px)',boxShadow:'0 8px 22px rgba(189,133,38,.3)'}},
+            h('div',{style:{position:'absolute',top:-11,right:10,display:'inline-flex',alignItems:'center',gap:5,background:C.amber,color:'#fff',fontFamily:"'Libre Franklin',sans-serif",fontSize:10,fontWeight:600,letterSpacing:'.04em',padding:'3px 9px',borderRadius:12,boxShadow:'0 2px 8px rgba(189,133,38,.4)'}},
+              h('span',{'aria-hidden':true,style:{fontSize:9}},'\u25B6'),'WATCH'),
+            h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:17,color:C.amber}},'BirdNET verify?'),
+            h('div',{style:{fontSize:11.5,color:C.mut,marginTop:3}},'does it sound like the right species?'),
+            h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.amber,marginTop:6,fontWeight:600}},'Click to watch it in action \u2192')),
+          h('div',{style:{display:'flex',gap:30,marginTop:8,fontFamily:"'Libre Franklin',sans-serif",fontSize:12}},
+            h('span',{style:{color:C.teal}},'\u2713 keep \u2192 training'),
+            h('span',{style:{color:C.rust}},'\u2717 discard'))):null),
+      this.miniNote('Recreated from Fig 10 (p.12).')
+    ]);
+  }
+
+  cell(label,name,desc,score,best,on,highlight){
+    return h('div',{style:{position:'relative',padding:'16px 16px',borderRadius:6,background:on?(best?'#fff':C.card):C.line2,
+      border:'1.5px solid '+(best?C.teal:(highlight?C.amber:C.line)),opacity:on?1:.35,transition:this.trans(),minHeight:96,
+      boxShadow:best&&on?'0 4px 18px rgba(47,93,82,.16)':'none'}},
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.tealL,letterSpacing:'.08em'}},label),
+      h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13.5,color:C.ink,marginTop:3,lineHeight:1.25}},name),
+      h('div',{style:{fontSize:10.5,color:C.mut,marginTop:3}},desc),
+      score!=null?h('div',{style:{marginTop:8,fontSize:22,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif",color:best?C.teal:C.ink}}, score.toFixed(4)):null,
+      best&&on?h('div',{style:{position:'absolute',top:-10,right:10,background:C.teal,color:'#fff',fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:10,fontFamily:'Libre Franklin'}},'best'):null);
+  }
+  matrixGrid(showScores, reveal){
+    return h('div',{style:{display:'grid',gridTemplateColumns:'120px 1fr 1fr',gridTemplateRows:'auto 1fr 1fr',gap:10,flex:1}},
+      h('div',{}), 
+      h('div',{style:{textAlign:'center',fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13,color:C.sub,alignSelf:'end',paddingBottom:4}},'A. Frozen BirdNET + logreg'),
+      h('div',{style:{textAlign:'center',fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13,color:C.sub,alignSelf:'end',paddingBottom:4}},'B. Fine-tuned EfficientNet'),
+      h('div',{style:{display:'flex',alignItems:'center',fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13,color:C.sub}},'1. Original data'),
+      this.cell('A1','Frozen \u00b7 original','embeddings + logreg',showScores?0.9429:null,false,true,false),
+      this.cell('A2','Fine-tuned \u00b7 original','EfficientNet-b0',showScores?0.9465:null,false,reveal>=1||showScores,false),
+      h('div',{style:{display:'flex',alignItems:'center',fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13,color:C.sub}},'2. + AudioLDM 2 audio'),
+      this.cell('B1','Frozen \u00b7 +synthetic','embeddings + logreg',showScores?0.9463:null,false,reveal>=1||showScores,showScores),
+      this.cell('B2','Fine-tuned \u00b7 +synthetic','EfficientNet-b0',showScores?0.9549:null,true,reveal>=1||showScores,false));
+  }
+  stMatrix(reveal){
+    return this.panel([
+      this.stageTitle('Two axes, four conditions','Table 1 \u00b7 study design'),
+      this.matrixGrid(false, reveal),
+      reveal>=1?h('div',{style:{marginTop:14,display:'flex',gap:18,fontSize:11.5,color:C.mut}},
+        h('span',{},'\u2193 column = effect of synthetic data'),
+        h('span',{},'\u2192 row = effect of the model')):null,
+      this.miniNote('Scores revealed in section 09. Recreated from Table 1 (p.3).')
+    ]);
+  }
+  stResult(reveal){
+    return this.panel([
+      this.stageTitle('Macro-AUC across the four cells','Table 6 \u00b7 headline result'),
+      this.matrixGrid(reveal>=1, 2),
+      reveal>=2?h('div',{style:{marginTop:14,display:'flex',gap:14}},
+        h('div',{style:{flex:1,padding:'8px 12px',background:C.tealBg,borderRadius:4,fontSize:11.5,color:C.sub}},h('b',{},'+0.0034'),' frozen, from synthetic data'),
+        h('div',{style:{flex:1,padding:'8px 12px',background:C.tealBg,borderRadius:4,fontSize:11.5,color:C.sub}},h('b',{},'+0.0084'),' fine-tuned, from synthetic data')):null,
+      this.miniNote('Recreated from Table 6 (p.14). Higher is better; 1.0 is perfect.')
+    ]);
+  }
+
+  stPipe(reveal){
+    const stage=(t,sub,on,col)=>h('div',{style:{padding:'10px 12px',borderRadius:5,background:on?(col||C.card):C.line2,border:'1px solid '+(on?C.line:C.line2),opacity:on?1:.3,transition:this.trans(),textAlign:'center',flex:1}},
+      h('div',{style:{fontSize:12,fontWeight:600,color:C.ink}},t), sub?h('div',{style:{fontSize:10,color:C.mut,marginTop:2}},sub):null);
+    const ar=on=>h('div',{style:{color:on?C.teal:C.faint,fontSize:16,padding:'0 2px'}},'\u2192');
+    const row=(label,items,on)=>h('div',{style:{opacity:on?1:.25,transition:this.trans(),marginBottom:14}},
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.tealL,marginBottom:6,letterSpacing:'.06em'}},label),
+      h('div',{style:{display:'flex',alignItems:'center',gap:2}}, items));
+    return this.panel([
+      this.stageTitle('From audio to species scores','Fig 8\u20139\u201310 \u00b7 pipelines'),
+      h('div',{style:{flex:1,display:'flex',flexDirection:'column',justifyContent:'center'}},
+        row('Path A \u00b7 frozen (A1 / B1)',[stage('Audio 5s',null,true),ar(true),stage('Window + resample',null,reveal>=0),ar(reveal>=0),stage('Frozen BirdNET','1024-d embedding',reveal>=0,C.tealBg),ar(reveal>=0),stage('Logistic reg','species scores',reveal>=0)],true),
+        row('Path B \u00b7 fine-tuned (A2 / B2)',[stage('Audio 5s',null,true),ar(true),stage('Log-mel 224\u00d7224',null,reveal>=1),ar(reveal>=1),stage('EfficientNet-b0','fine-tuned',reveal>=1,C.amberBg),ar(reveal>=1),stage('BCE head','species scores',reveal>=1)],reveal>=1),
+        row('Synthetic data \u00b7 generate-then-verify',[stage('AudioLDM 2','generate',reveal>=2,C.amberBg),ar(reveal>=2),stage('BirdNET verify','gate',reveal>=2),ar(reveal>=2),stage('Keep 800','\u2192 train pools',reveal>=2,C.tealBg)],reveal>=2)),
+      this.miniNote('Recreated from Fig 8\u20139\u201310 (p.10\u201312).')
+    ]);
+  }
+
+  stFilter(reveal){
+    const rows=[['Reptilia',78.1,C.tealL],['Insecta',67.9,C.teal],['Amphibia',7.3,C.amber],['Mammalia',6.4,C.amber],['Aves',0.0,C.rust]];
+    return this.panel([
+      this.stageTitle('Keep-rate of generated clips','Table 7 \u00b7 what passed'),
+      reveal>=0?h('div',{style:{display:'flex',gap:14,marginBottom:18}},
+        h('div',{style:{flex:1,padding:'12px 14px',background:C.card,border:'1px solid '+C.line,borderRadius:5}},
+          h('div',{style:{fontSize:30,fontWeight:600,color:C.teal,fontFamily:'Fraunces,serif'}},'23.0%'),
+          h('div',{style:{fontSize:11,color:C.mut,marginTop:2}},'overall \u2014 800 of 3,484 kept')),
+        h('div',{style:{flex:1,padding:'12px 14px',background:'#fff',border:'1.5px solid '+C.rust,borderRadius:5}},
+          h('div',{style:{fontSize:30,fontWeight:600,color:C.rust,fontFamily:'Fraunces,serif'}},'0.0%'),
+          h('div',{style:{fontSize:11,color:C.mut,marginTop:2}},'Aves \u2014 BirdNET-covered species'))):null,
+      reveal>=1?h('div',{style:{display:'flex',flexDirection:'column',gap:12,flex:1,justifyContent:'center'}},
+        rows.map((r,i)=>h('div',{key:i,style:{display:'grid',gridTemplateColumns:'78px 1fr 52px',alignItems:'center',gap:10}},
+          h('div',{style:{fontSize:12.5,color:C.sub,fontFamily:'Fraunces,serif',fontWeight:600}},r[0]),
+          h('div',{style:{height:18,background:C.line2,borderRadius:3,overflow:'hidden'}},
+            h('div',{style:{height:'100%',width:Math.max(r[1],1.2)+'%',background:r[2],transition:this.trans(),transitionDelay:(i*70)+'ms'}})),
+          h('div',{style:{fontWeight:600,fontSize:12.5,color:C.ink,fontFamily:"'Libre Franklin',sans-serif"}},r[1].toFixed(1)+'%')))):null,
+      this.miniNote('Recreated from Table 7 (p.15). The verifier is strictest where it is most expert.')
+    ]);
+  }
+
+  stBenefit(reveal){
+    const bands=[{l:'\u2264 5 examples',a:0.666,b:0.890},{l:'\u2264 10 examples',a:0.764,b:0.918},{l:'all 203 classes',a:0.9429,b:0.9549}];
+    const taxa=[['Aves',.960,.959],['Amphibia',.860,.951],['Insecta',.994,.968],['Mammalia',.890,.903],['Reptilia',.850,.801]];
+    const showTaxa=reveal>=2;
+    const y=v=>(1-(v-0.6)/0.4)*150;
+    return this.panel([
+      this.stageTitle(showTaxa?'Per-taxon AUC \u2014 A1 vs B2':'Per-class AUC by support band','Table 8\u20139 \u00b7 Fig 15'),
+      !showTaxa?h('div',{style:{display:'flex',gap:30,alignItems:'flex-end',justifyContent:'center',flex:1,padding:'10px 0'}},
+        bands.map((bd,i)=>h('div',{key:i,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:8}},
+          h('div',{style:{display:'flex',gap:8,alignItems:'flex-end',height:170}},
+            h('div',{style:{display:'flex',flexDirection:'column',justifyContent:'flex-end',alignItems:'center'}},
+              h('div',{style:{fontSize:11,fontWeight:600,color:C.mut,fontFamily:"'Libre Franklin',sans-serif",marginBottom:3}},bd.a.toFixed(3)),
+              h('div',{style:{width:34,height:(170-y(bd.a)),background:C.line,borderRadius:'3px 3px 0 0',transition:this.trans()}})),
+            h('div',{style:{display:'flex',flexDirection:'column',justifyContent:'flex-end',alignItems:'center'}},
+              h('div',{style:{fontSize:11,fontWeight:700,color:C.teal,fontFamily:"'Libre Franklin',sans-serif",marginBottom:3}},bd.b.toFixed(3)),
+              h('div',{style:{width:34,height:(170-y(bd.b)),background:C.teal,borderRadius:'3px 3px 0 0',transition:this.trans(),transitionDelay:'120ms'}}))),
+          h('div',{style:{fontSize:11,color:C.sub,fontFamily:'Fraunces,serif',fontWeight:600,textAlign:'center'}},bd.l),
+          i===0&&reveal>=1?h('div',{style:{fontSize:10.5,color:'#8a5f15',fontWeight:600}},'+0.224'):null)))
+        : h('div',{style:{display:'flex',flexDirection:'column',gap:11,flex:1,justifyContent:'center'}},
+          taxa.map((t,i)=>h('div',{key:i,style:{display:'grid',gridTemplateColumns:'74px 1fr',gap:10,alignItems:'center'}},
+            h('div',{style:{fontSize:12,color:C.sub,fontFamily:'Fraunces,serif',fontWeight:600}},t[0]),
+            h('div',{style:{position:'relative',height:22}},
+              h('div',{style:{position:'absolute',left:0,top:4,height:14,width:((t[1]-0.6)/0.4*100)+'%',background:C.line,borderRadius:3}}),
+              h('div',{style:{position:'absolute',left:0,top:4,height:14,width:((t[2]-0.6)/0.4*100)+'%',background:C.teal,opacity:.55,borderRadius:3,transition:this.trans()}}),
+              h('div',{style:{position:'absolute',right:6,top:3,fontSize:11,fontFamily:"'Libre Franklin',sans-serif",color:C.sub}}, t[1].toFixed(3)+' \u2192 '+t[2].toFixed(3)))))),
+      h('div',{style:{marginTop:12,display:'flex',gap:16,fontSize:11,color:C.mut}},
+        h('span',{style:{display:'flex',alignItems:'center',gap:5}},h('span',{style:{width:11,height:11,background:C.line,borderRadius:2}}),'A1 baseline'),
+        h('span',{style:{display:'flex',alignItems:'center',gap:5}},h('span',{style:{width:11,height:11,background:C.teal,borderRadius:2}}),'B2 best')),
+      this.miniNote('Recreated from Table 8\u20139 (p.15\u201316) and Fig 15 (p.31).')
+    ]);
+  }
+
+  stTrade(reveal){
+    const cells=[['A1',0.9429,0.789],['A2',0.9465,0.646],['B1',0.9463,0.796],['B2',0.9549,0.669]];
+    return this.panel([
+      this.stageTitle('Two metrics disagree','Table 10 \u00b7 trade-off'),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:16,flex:1,justifyContent:'center'}},
+        h('div',{style:{display:'grid',gridTemplateColumns:'56px repeat(4,1fr)',gap:10,alignItems:'center'}},
+          h('div',{}), cells.map(c=>h('div',{key:c[0],style:{textAlign:'center',fontFamily:"'Libre Franklin',sans-serif",fontSize:12,fontWeight:600,color:C.tealL}},c[0]))),
+        this.tradeRow('macro-AUC', cells.map(c=>c[1]), 0.93, 0.957, C.teal, true),
+        reveal>=1?this.tradeRow('top-1 acc', cells.map(c=>c[2]), 0.62, 0.81, '#8a5f15', false):null),
+      reveal>=2?h('div',{style:{marginTop:8,padding:'11px 14px',background:C.amberBg,borderRadius:4,fontSize:12.5,color:C.sub,lineHeight:1.5}},
+        h('b',{},'B2'),' is the best ranker; ',h('b',{},'A1'),' is the best single-label classifier. Different jobs.'):null,
+      this.miniNote('Recreated from Table 10 (p.16).')
+    ]);
+  }
+  tradeRow(label, vals, lo, hi, col, isAuc){
+    const best = isAuc ? Math.max.apply(null,vals) : Math.max.apply(null,vals);
+    return h('div',{},
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.mut,marginBottom:6}}, label),
+      h('div',{style:{display:'grid',gridTemplateColumns:'56px repeat(4,1fr)',gap:10,alignItems:'end'}},
+        h('div',{style:{fontSize:10,color:C.faint}}, hi.toFixed(2)+'\u2013'+lo.toFixed(2)),
+        vals.map((v,i)=>{ const hpx=18+((v-lo)/(hi-lo))*90; const top=Math.abs(v-best)<1e-9; return h('div',{key:i,style:{display:'flex',flexDirection:'column',alignItems:'center'}},
+          h('div',{style:{fontSize:11,fontWeight:700,color:top?col:C.sub,fontFamily:"'Libre Franklin',sans-serif",marginBottom:3}}, v.toFixed(isAuc?4:3)),
+          h('div',{style:{width:'70%',height:hpx,background:top?col:C.line,borderRadius:'3px 3px 0 0',transition:this.trans()}})); })));
+  }
+
+  stMeaning(reveal){
+    const items=[
+      {t:'report',h:'What the authors report',b:'B2 = 0.9549 is best; rare-class AUC rose 0.666 \u2192 0.890; amphibians gained, birds did not.'},
+      {t:'simplify',h:'How we put it',b:'Synthetic audio is a patch for scarcity, not a general upgrade.'},
+      {t:'interpret',h:'An interpretation',b:'This could expand what biodiversity monitoring can detect \u2014 if generators improve for non-bird taxa.'},
+      {t:'limit',h:'A limitation (author-stated, \u00a77.3)',b:'Kept clips skew by taxon; the filter only verifies what BirdNET covers; single-example classes can\u2019t be rescued; the headline metric never tested the soundscape shift.'}
+    ];
+    return this.panel([
+      this.stageTitle('Separating claim from interpretation','\u00a77 \u00b7 meaning + limits'),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:11,flex:1,justifyContent:'center'}},
+        items.map((it,i)=>{ const cl=CLAIM[it.t]; const on=reveal>=Math.min(i,1); return h('div',{key:i,style:{display:'flex',gap:12,padding:'12px 14px',background:cl.bg,borderRadius:5,borderLeft:'3px solid '+cl.c,opacity:on?1:.3,transition:this.trans()}},
+          h('div',{style:{flex:1}},
+            h('div',{style:{fontSize:10.5,fontWeight:600,color:cl.c,fontFamily:"'Libre Franklin',sans-serif",textTransform:'uppercase',letterSpacing:'.05em'}}, it.h),
+            h('div',{style:{fontSize:12.5,color:C.sub,marginTop:4,lineHeight:1.45}}, it.b))); })),
+      this.miniNote('Four claim types kept visually distinct so an attractive explanation can\u2019t overstate the paper.')
+    ]);
+  }
+
+  stSynth(){
+    return this.panel([
+      this.stageTitle('The answer, in one line','\u00a78 \u00b7 synthesis'),
+      h('div',{style:{flex:1,display:'flex',flexDirection:'column',justifyContent:'center',gap:18}},
+        h('div',{style:{fontFamily:'Fraunces,serif',fontSize:25,lineHeight:1.32,color:C.ink,fontWeight:500,textWrap:'pretty'}},
+          'Yes \u2014 but conditionally. Generative audio helps where data is scarce ',h('i',{},'and'),' the generator can pass verification. Here that meant amphibians, not birds.'),
+        h('div',{style:{display:'flex',gap:12}},
+          h('div',{style:{flex:1,padding:'14px',background:C.card,border:'1px solid '+C.line,borderRadius:5}},
+            h('div',{style:{fontSize:30,fontWeight:600,color:C.teal,fontFamily:'Fraunces,serif'}},'0.890'),
+            h('div',{style:{fontSize:11,color:C.mut,marginTop:2}},'rare-class AUC, up from 0.666')),
+          h('div',{style:{flex:1,padding:'14px',background:C.card,border:'1px solid '+C.line,borderRadius:5}},
+            h('div',{style:{fontSize:30,fontWeight:600,color:'#8a5f15',fontFamily:'Fraunces,serif'}},'23%'),
+            h('div',{style:{fontSize:11,color:C.mut,marginTop:2}},'of clips survived the filter (0% birds)')))),
+      this.miniNote('Full synthesis below \u2014 four takeaways + citation export.')
+    ]);
+  }
+
+  techStack(){
+    const cats=[
+      {t:'Language & runtime', c:C.mut, ic:['M8 9l3 3l-3 3','M13 15l3 0','M3 6a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2l0 -12'], items:[['Python 3.11','local .venv; Colab (A100/L4) for training-heavy work'],['Jupyter','primary working environment']]},
+      {t:'Core data science', c:C.plum, ic:['M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14','M3 10h18','M10 3v18'], items:[['NumPy','arrays / numerical work'],['Pandas','competition CSVs (train.csv, taxonomy.csv)'],['SciPy','stats (Ledoit\u2013Wolf covariance, Gaussian smoothing)'],['scikit-learn','logreg, MLPClassifier, PCA, splits, metrics (ROC-AUC, F1), isotonic calibration, LedoitWolf']]},
+      {t:'Deep learning', c:C.teal, ic:['M15.5 13a3.5 3.5 0 0 0 -3.5 3.5v1a3.5 3.5 0 0 0 7 0v-1.8','M8.5 13a3.5 3.5 0 0 1 3.5 3.5v1a3.5 3.5 0 0 1 -7 0v-1.8','M17.5 16a3.5 3.5 0 0 0 0 -7h-.5','M19 9.3v-2.8a3.5 3.5 0 0 0 -7 0','M6.5 16a3.5 3.5 0 0 1 0 -7h.5','M5 9.3v-2.8a3.5 3.5 0 0 1 7 0v10'], items:[['PyTorch','end-to-end EfficientNet fine-tuning (A2/B2)'],['TensorFlow / TFLite','BirdNET embedding inference'],['timm','pretrained backbones (tf_efficientnet_b0_ns)'],['HF Transformers / PEFT / Accelerate','feature extractors (Perch 2.0), parameter-efficient fine-tuning'],['ONNX Runtime','inference backend']]},
+      {t:'Audio processing', c:C.sky, ic:['M21 12h-2c-.894 0 -1.662 -.857 -1.761 -2c-.296 -3.45 -.749 -6 -2.749 -6s-2.5 3.582 -2.5 8s-.5 8 -2.5 8s-2.452 -2.547 -2.749 -6c-.1 -1.147 -.867 -2 -1.763 -2h-2'], items:[['librosa','mel-spectrograms, resampling'],['soundfile','reading .ogg audio']]},
+      {t:'Synthetic data (B1/B2)', c:C.amber, ic:['M6 21l15 -15l-3 -3l-15 15l3 3','M15 6l3 3','M9 3a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2','M19 13a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2'], items:[['diffusers','AudioLDM2 pipeline for synthetic bird audio']]},
+      {t:'Visualization', c:C.tealL, ic:['M3 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -6','M15 9a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -10','M9 5a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -14','M4 20h14'], items:[['Matplotlib','figures'],['Seaborn','confusion matrices']]},
+      {t:'Utilities & infra', c:C.mut, ic:['M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5'], items:[['tqdm','progress bars'],['IPython','display'],['Kaggle API','data download'],['Google Drive','Colab storage']]},
+      {t:'Data formats', c:C.rust, ic:['M4 6a8 3 0 1 0 16 0a8 3 0 1 0 -16 0','M4 6v6a8 3 0 0 0 16 0v-6','M4 12v6a8 3 0 0 0 16 0v-6'], items:[['CSV','labels / metadata'],['NPZ','cached embeddings'],['.pt / .pth','checkpoints'],['.tflite','frozen BirdNET model']]}
+    ];
+    const mono=(name)=>{ const w=name.trim(); return w[0]==='.' ? w.slice(0,3) : w.replace(/[^A-Za-z0-9].*$/,'').slice(0,2); };
+    const card=(cat)=>h('div',{key:cat.t,style:{breakInside:'avoid',WebkitColumnBreakInside:'avoid',background:C.card,border:'1px solid '+C.line,borderRadius:12,padding:'17px 19px 19px',marginBottom:22,boxShadow:'0 4px 16px rgba(31,40,33,.05)'}},
+      h('div',{style:{display:'flex',alignItems:'center',gap:11,marginBottom:14}},
+        h('div',{style:{width:32,height:32,borderRadius:8,background:cat.c+'1f',border:'1px solid '+cat.c+'40',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:cat.c}},
+          h('svg',{width:19,height:19,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'}, cat.ic.map((d,i)=>h('path',{key:i,d:d})))),
+        h('div',{style:{flex:1,fontFamily:"'Libre Franklin',sans-serif",fontSize:15,fontWeight:700,color:C.ink,letterSpacing:'-.01em'}}, cat.t),
+        h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:12.5,color:C.faint,fontWeight:600}}, cat.items.length)),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:13}},
+        cat.items.map((it,i)=>h('div',{key:i,style:{display:'flex',gap:11,alignItems:'flex-start'}},
+          h('div',{style:{width:30,height:30,flexShrink:0,borderRadius:7,background:cat.c+'1f',border:'1px solid '+cat.c+'40',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'IBM Plex Mono',monospace",fontSize:11.5,fontWeight:700,color:cat.c,lineHeight:1}}, mono(it[0])),
+          h('div',{style:{flex:1,fontSize:13,lineHeight:1.45,paddingTop:2}},
+            h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontWeight:700,color:C.ink}}, it[0]),
+            h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",color:C.mut}}, ' \u2014 '+it[1]))))));
+    return h('div',{id:'sec-stack',style:{padding:'84px 8vw 104px',background:C.panel,borderTop:'1px solid '+C.line}},
+      h('div',{style:{maxWidth:1140,margin:'0 auto'}},
+        h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:12,letterSpacing:'.18em',color:C.tealL,textTransform:'uppercase',marginBottom:14}},'14 \u00b7 The toolbox'),
+        h('h2',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:'clamp(26px,4vw,40px)',margin:'0 0 12px',lineHeight:1.15,color:C.ink}},'Tech stack'),
+        h('p',{style:{fontFamily:'Newsreader,serif',fontSize:17,lineHeight:1.62,color:C.sub,maxWidth:700,margin:'0 0 38px'}},'A short coda for the curious \u2014 every open-source library behind the study, grouped by what it does. Sound enters as audio I/O, forks through two model paths, and a generator feeds synthetic clips back into training.'),
+        h('div',{style:{columns:'330px',columnGap:'22px'}}, cats.map(card))));
+  }
+
+  // ================= STORY COLUMN =================
+  renderStep(st, idx){
+    const a=this.state.active===idx;
+    const fk=st.sectionKey+st.li+'|further', tk=st.sectionKey+st.li+'|tech';
+    const cl=CLAIM[st.ev.t];
+    const exp=(label, body, k)=> body ? h('div',{style:{marginTop:12}},
+        h('button',{onClick:()=>this.toggleExp(k),style:{display:'flex',alignItems:'center',gap:7,background:'none',border:'none',padding:0,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:12,fontWeight:600,color:C.teal}},
+          h('span',{style:{display:'inline-block',transition:this.trans(),transform:this.expOpen(k)?'rotate(90deg)':'none'}},'\u25b8'), label),
+        this.expOpen(k)?h('div',{style:{marginTop:8,fontSize:13.5,lineHeight:1.6,color:C.sub,paddingLeft:15,borderLeft:'2px solid '+C.line}}, body):null) : null;
+    return h('div',{key:st.sectionKey+st.li,'data-idx':idx,className:'story-step',
+        style:{minHeight: st.li===0?'70vh':'62vh',display:'flex',flexDirection:'column',justifyContent:'center',padding:'30px 0'}},
+      h('div',{style:{opacity:a?1:.4,transition:this.trans(),transform:a?'none':'translateY(4px)'}},
+        st.li===0?h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,letterSpacing:'.16em',color:C.tealL,textTransform:'uppercase',marginBottom:10}},
+          st.num+' \u00b7 '+st.secTitle):null,
+        h('p',{className:(st.sectionKey==='hook'&&st.li===0)?'dropcap':'',style:{fontFamily:'Newsreader,serif',fontSize:19,lineHeight:1.62,color:C.ink,margin:0,fontWeight:st.li===0?500:400,textWrap:'pretty'}}, this.linkify(st.main)),
+        this.state.level>=1?exp('Explain further', st.further, fk):null,
+        this.state.level>=2?exp('Technical detail', st.tech, tk):null,
+        h('div',{style:{marginTop:14}},
+          h('button',{onClick:()=>this.setState({evidence:true}),style:{display:'inline-flex',alignItems:'center',gap:7,padding:'5px 11px',borderRadius:20,background:cl.bg,border:'1px solid '+cl.c+'44',cursor:'pointer',fontFamily:'Libre Franklin',fontSize:11.5,color:cl.c,fontWeight:600}},
+            h('span',{style:{width:7,height:7,borderRadius:7,background:cl.c}}), cl.label, h('span',{style:{color:C.mut,fontWeight:400}}, '\u00b7 '+st.ev.s))),
+        h('span',{style:{position:'absolute',width:1,height:1,overflow:'hidden',clip:'rect(0 0 0 0)'}}, st.ax)));
+  }
+  linkify(text){
+    const terms=this.glossaryTerms();
+    const keys=Object.keys(terms).sort((a,b)=>b.length-a.length);
+    // single first-occurrence linking
+    let nodes=[text]; const used={};
+    keys.forEach(term=>{ if(used[term]) return; for(let i=0;i<nodes.length;i++){ if(typeof nodes[i]!=='string') continue; const re=new RegExp('\\b('+term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')\\b'); const m=nodes[i].match(re); if(m){ const idx=m.index; const before=nodes[i].slice(0,idx); const after=nodes[i].slice(idx+m[1].length); const btn=h('button',{key:term,onClick:()=>this.setState({glossary:true,term:term.toLowerCase()}),style:{background:'none',border:'none',padding:0,margin:0,font:'inherit',color:'inherit',cursor:'help',borderBottom:'1.5px dotted '+C.tealL,textDecoration:'none'}}, m[1]); nodes.splice(i,1,before,btn,after); used[term]=1; break; } } });
+    return nodes;
+  }
+
+  // ================= GLOSSARY =================
+  glossaryTerms(){
+    return {
+      'bioacoustics':'Studying animals by the sounds they make.',
+      'passive acoustic monitoring':'Leaving recorders running in the field to capture ambient sound continuously.',
+      'PAM':'Passive acoustic monitoring \u2014 recorders left running to capture sound continuously.',
+      'focal recording':'A clean clip, usually one animal, from citizen-science platforms like Xeno-Canto or iNaturalist.',
+      'soundscape':'A continuous field recording with overlapping calls and background noise \u2014 the deployment setting.',
+      'domain shift':'The mismatch between clean focal training clips and messy field soundscapes.',
+      'long tail':'A few classes have many examples; many classes have very few.',
+      'taxon':'A biological group \u2014 birds (Aves), amphibians, insects, mammals, reptiles. This dataset spans five.',
+      'BirdNET':'A robust bird-call classifier trained on >500k recordings; here it is both a frozen feature extractor and the verification filter.',
+      'embedding':'A fixed-length numeric summary of audio (here 1024-dimensional) from a pretrained model.',
+      'fine-tuned':'The whole backbone is updated for this task (vs frozen, where only a small head trains).',
+      'frozen':'Backbone weights are left unchanged; only a small classifier head is trained.',
+      'EfficientNet-b0':'A compact convolutional image network, applied here to spectrogram images.',
+      'log-mel spectrogram':'An image of audio \u2014 time on x, mel-frequency on y, loudness as colour.',
+      'AudioLDM 2':'A text-to-audio diffusion model that generates new audio clips from a text prompt.',
+      'synthetic':'Manufactured training examples \u2014 here, generated audio \u2014 to help scarce classes.',
+      'keep-rate':'The fraction of generated clips that pass the BirdNET verification check.',
+      'verification':'The BirdNET check that decides whether a generated clip is realistic enough to keep.',
+      'macro-AUC':'The primary metric: per-class ranking quality averaged with equal weight across classes. 0.5 = chance, 1 = perfect.',
+      'top-1 accuracy':'The fraction of windows whose single highest-scoring class is correct.',
+      'diffusion model':'A generative model that produces data (here audio) by iteratively denoising from noise toward a prompt.'
+    };
+  }
+  renderGlossaryDrawer(){
+    if(!this.state.glossary) return null;
+    const terms=this.glossaryTerms();
+    const active=this.state.term;
+    return this.drawer('Glossary', ()=>this.setState({glossary:false,term:null}),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:2}},
+        Object.keys(terms).map(k=>{ const on=active===k.toLowerCase(); return h('div',{key:k,style:{padding:'12px 14px',borderRadius:6,background:on?C.tealBg:'transparent',transition:this.trans()}},
+          h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:14.5,color:on?C.teal:C.ink}}, k),
+          h('div',{style:{fontSize:12.5,color:C.sub,marginTop:3,lineHeight:1.5}}, terms[k])); })));
+  }
+  renderEvidenceDrawer(){
+    if(!this.state.evidence) return null;
+    return this.drawer('Evidence & source traceability', ()=>this.setState({evidence:false}),
+      h('div',{},
+        h('p',{style:{fontSize:13,color:C.sub,lineHeight:1.6,marginTop:0}},'Every claim in this explainer is tagged by type and linked to where it lives in the paper. Four kinds are kept visually distinct:'),
+        h('div',{style:{display:'flex',flexDirection:'column',gap:10,margin:'14px 0 22px'}},
+          Object.keys(CLAIM).map(k=>{ const cl=CLAIM[k]; const desc={report:'A number or result the author states directly.',simplify:'Our paraphrase for the reader \u2014 not the paper\u2019s wording.',interpret:'A practical implication we draw, beyond the paper\u2019s claims.',limit:'A boundary on the conclusion; author-stated ones cite \u00a77.3.'}; return h('div',{key:k,style:{display:'flex',gap:10,alignItems:'flex-start',padding:'10px 12px',background:cl.bg,borderRadius:5,borderLeft:'3px solid '+cl.c}},
+            h('span',{style:{width:9,height:9,borderRadius:9,background:cl.c,marginTop:4,flexShrink:0}}),
+            h('div',{}, h('b',{style:{color:cl.c,fontSize:12.5}}, cl.label), h('div',{style:{fontSize:12,color:C.sub,marginTop:2}}, desc[k]))); })),
+        h('div',{style:{padding:'12px 14px',background:C.card,border:'1px solid '+C.line,borderRadius:6}},
+          h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.tealL,marginBottom:6}},'PRIMARY SOURCE'),
+          h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:14,lineHeight:1.4}},'Can Generative AI Improve Bioacoustic Classification?'),
+          h('div',{style:{fontSize:12,color:C.mut,marginTop:4}},'Ademar Tutor \u00b7 COMPX525, University of Waikato \u00b7 19 June 2026'),
+          h('a',{href:'report/main.pdf',target:'_blank',style:{display:'inline-block',marginTop:10,fontSize:12.5,color:C.teal,fontWeight:600}},'Open report/main.pdf \u2192'))));
+  }
+  renderAnimalModal(){
+    if(!this.state.animalModal) return null;
+    const a=this.animals().find(x=>x.slug===this.state.animalModal);
+    if(!a) return null;
+    const close=()=>this.setState({animalModal:null});
+    const err=this.state.photoErr[a.slug];
+    const sec=(label,text)=>h('div',{key:label,style:{marginBottom:14}},
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:C.tealL,marginBottom:4}}, label),
+      h('div',{style:{fontSize:13,color:C.sub,lineHeight:1.55}}, text));
+    return h('div',{role:'dialog','aria-modal':'true','aria-label':a.common,style:{position:'fixed',inset:0,zIndex:70,display:'flex',alignItems:'center',justifyContent:'center',padding:24}},
+      h('div',{onClick:close,style:{position:'absolute',inset:0,background:'rgba(20,25,20,.42)',animation:this.state.reduced?'none':'fadeUp .2s ease'}}),
+      h('div',{className:'om-scroll',style:{position:'relative',width:'min(560px,94vw)',maxHeight:'88vh',overflowY:'auto',background:C.bg,borderRadius:14,boxShadow:'0 24px 70px rgba(0,0,0,.32)',animation:this.state.reduced?'none':'fadeUp .25s ease'}},
+        h('div',{style:{position:'relative'}},
+          err
+            ? h('div',{'aria-hidden':true,style:{width:'100%',height:200,background:a.color,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Libre Franklin',sans-serif",fontSize:13,color:'#fff'}}, a.taxon)
+            : h('img',{src:a.photo,alt:'Photograph of a '+a.common+' ('+a.sci+')',onError:()=>{ const p=Object.assign({},this.state.photoErr); p[a.slug]=true; this.setState({photoErr:p}); },style:{width:'100%',height:200,objectFit:'cover',display:'block'}}),
+          h('button',{onClick:close,'aria-label':'Close',style:{position:'absolute',top:12,right:12,width:34,height:34,borderRadius:'50%',border:'none',background:'rgba(20,25,20,.55)',color:'#fff',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}},'\u2715')),
+        h('div',{style:{padding:'18px 24px 24px'}},
+          h('div',{style:{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap'}},
+            h('span',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:24,color:C.ink}}, a.common),
+            h('span',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontSize:15,color:C.mut}}, a.sci)),
+          h('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'9px 0 16px',flexWrap:'wrap'}},
+            h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',color:'#fff',background:a.color,padding:'3px 9px',borderRadius:4}}, a.taxon),
+            a.size?h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.mut,border:'1px solid '+C.line,padding:'3px 9px',borderRadius:4}}, a.size):null),
+          sec('Range', a.range),
+          sec('Habitat & behaviour', a.habitat),
+          sec('Its call', a.call),
+          h('div',{style:{padding:'12px 14px',background:C.tealBg,borderRadius:8,marginTop:4,marginBottom:14}},
+            h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:C.teal,marginBottom:4}},'Why it matters here'),
+            h('div',{style:{fontSize:13,color:C.sub,lineHeight:1.55}}, a.why)),
+          h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:C.faint}}, 'Photo: '+a.photoCredit))));
+  }
+  renderSpeciesModal(){
+    if(!this.state.speciesModal) return null;
+    const sp=this.filterSpecies().find(x=>x.key===this.state.speciesModal);
+    if(!sp) return null;
+    const close=()=>this.setState({speciesModal:null});
+    const err=!!this.state.photoErr['sp-'+sp.key];
+    const name=sp.common||sp.sci;
+    return h('div',{role:'dialog','aria-modal':'true','aria-label':name,style:{position:'fixed',inset:0,zIndex:70,display:'flex',alignItems:'center',justifyContent:'center',padding:24}},
+      h('div',{onClick:close,style:{position:'absolute',inset:0,background:'rgba(20,25,20,.42)',animation:this.state.reduced?'none':'fadeUp .2s ease'}}),
+      h('div',{className:'om-scroll',style:{position:'relative',width:'min(560px,94vw)',maxHeight:'88vh',overflowY:'auto',background:C.bg,borderRadius:14,boxShadow:'0 24px 70px rgba(0,0,0,.32)',animation:this.state.reduced?'none':'fadeUp .25s ease'}},
+        h('div',{style:{position:'relative'}},
+          err
+            ? h('div',{'aria-hidden':true,style:{width:'100%',height:200,background:sp.color,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:"'Libre Franklin',sans-serif",fontSize:13,color:'#fff'}}, sp.taxon)
+            : h('img',{src:sp.photo,alt:sp.alt,onError:()=>{ const p=Object.assign({},this.state.photoErr); p['sp-'+sp.key]=true; this.setState({photoErr:p}); },style:{width:'100%',height:200,objectFit:'cover',display:'block'}}),
+          h('button',{onClick:close,'aria-label':'Close',style:{position:'absolute',top:12,right:12,width:34,height:34,borderRadius:'50%',border:'none',background:'rgba(20,25,20,.55)',color:'#fff',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}},'✕')),
+        h('div',{style:{padding:'18px 24px 24px'}},
+          h('div',{style:{display:'flex',alignItems:'baseline',gap:10,flexWrap:'wrap'}},
+            sp.common
+              ? h('span',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:24,color:C.ink}}, sp.common)
+              : h('span',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontWeight:500,fontSize:23,color:C.ink}}, sp.sci),
+            sp.common
+              ? h('span',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontSize:15,color:C.mut}}, sp.sci+(sp.syn?'  ·  '+sp.syn:''))
+              : (sp.syn?h('span',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontSize:14,color:C.mut}}, sp.syn):null)),
+          h('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'9px 0 16px',flexWrap:'wrap'}},
+            h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.08em',textTransform:'uppercase',color:'#fff',background:sp.color,padding:'3px 9px',borderRadius:4}}, sp.taxon),
+            h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10.5,color:C.sub,fontWeight:600,border:'1px solid '+C.line,padding:'3px 9px',borderRadius:4}}, sp.keep)),
+          h('div',{style:{marginBottom:14}},
+            sp.facts.map((f,i)=>h('div',{key:i,style:{fontSize:13,color:C.sub,lineHeight:1.55,marginBottom:i<sp.facts.length-1?3:0}}, f))),
+          h('div',{style:{padding:'12px 14px',background:C.tealBg,borderRadius:8,marginTop:4,marginBottom:14}},
+            h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:C.teal,marginBottom:6}},'Real vs synthetic'),
+            h('div',{style:{fontSize:13,color:C.sub,lineHeight:1.55,marginBottom:5}}, h('b',{style:{color:C.teal}},'Real recording — '), sp.realNote),
+            h('div',{style:{fontSize:13,color:C.sub,lineHeight:1.55}}, h('b',{style:{color:'#8a5f15'}},'Synthetic — '), sp.synthNote)),
+          h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:C.faint}}, sp.credit))));
+  }
+  renderAudioLDMModal(){
+    const m=this.state.videoModal;
+    if(!m) return null;
+    const close=()=>this.setState({videoModal:null});
+    const accent=m.accent||C.tealL;
+    return h('div',{role:'dialog','aria-modal':'true','aria-label':m.title,style:{position:'fixed',inset:0,zIndex:70,display:'flex',alignItems:'center',justifyContent:'center',padding:24}},
+      h('div',{onClick:close,style:{position:'absolute',inset:0,background:'rgba(20,25,20,.5)',animation:this.state.reduced?'none':'fadeUp .2s ease'}}),
+      h('div',{style:{position:'relative',width:'min(640px,94vw)',background:C.bg,borderRadius:14,boxShadow:'0 24px 70px rgba(0,0,0,.34)',animation:this.state.reduced?'none':'fadeUp .25s ease',overflow:'hidden'}},
+        h('div',{style:{position:'relative',width:'100%',aspectRatio:'16 / 9',background:'#000'}},
+          h('iframe',{src:'https://www.youtube.com/embed/'+m.id,title:'YouTube video player',frameBorder:'0',allow:'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',referrerPolicy:'strict-origin-when-cross-origin',allowFullScreen:true,style:{position:'absolute',inset:0,width:'100%',height:'100%',border:'none'}}),
+          h('button',{onClick:close,'aria-label':'Close',style:{position:'absolute',top:12,right:12,width:34,height:34,borderRadius:'50%',border:'none',background:'rgba(20,25,20,.62)',color:'#fff',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',zIndex:2}},'\u2715')),
+        h('div',{style:{padding:'18px 24px 22px'}},
+          h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:accent,marginBottom:6}},m.label),
+          h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:22,color:C.ink}},m.title),
+          h('p',{style:{fontSize:13.5,color:C.sub,lineHeight:1.6,margin:'8px 0 0'}},m.desc))));
+  }
+  drawer(title, close, body){
+    return h('div',{style:{position:'fixed',inset:0,zIndex:60,display:'flex',justifyContent:'flex-end'}},
+      h('div',{onClick:close,style:{position:'absolute',inset:0,background:'rgba(20,25,20,.32)',animation:this.state.reduced?'none':'fadeUp .2s ease'}}),
+      h('div',{className:'om-scroll',style:{position:'relative',width:'min(440px,92vw)',height:'100%',background:C.bg,boxShadow:'-12px 0 40px rgba(0,0,0,.18)',overflowY:'auto',padding:'24px 26px',animation:this.state.reduced?'none':'fadeUp .3s ease'}},
+        h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:18}},
+          h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:19,color:C.ink}}, title),
+          h('button',{onClick:close,'aria-label':'Close',style:{background:'none',border:'1px solid '+C.line,borderRadius:6,width:32,height:32,cursor:'pointer',fontSize:16,color:C.mut}},'\u2715')),
+        body));
+  }
+
+  // ================= TOP BAR + RAIL =================
+  topBar(){
+    const btn=(label,on,fn,extra)=>h('button',{onClick:fn,style:Object.assign({padding:'6px 12px',borderRadius:7,border:'1px solid '+(on?C.teal:C.line),background:on?C.teal:C.card,color:on?'#fff':C.sub,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:12,fontWeight:500},extra||{})}, label);
+    return h('div',{style:{position:'fixed',top:0,left:0,right:0,zIndex:40,display:'flex',alignItems:'center',gap:14,padding:'9px 20px',background:'rgba(242,235,221,.92)',backdropFilter:'blur(10px)',borderBottom:'1px solid '+C.line}},
+      h('button',{onClick:()=>this.go('top'),style:{background:'none',border:'none',cursor:'pointer',textAlign:'left',padding:0}},
+        h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:14.5,color:C.ink,lineHeight:1}},'Can Generative AI Improve Bioacoustic Classification?'),
+        h('div',{style:{fontSize:10.5,color:C.mut,marginTop:2}},'A. Tutor \u00b7 BirdCLEF-2026 \u00b7 interactive explainer')),
+      h('div',{style:{flex:1}}),
+      btn('Glossary', this.state.glossary, ()=>this.setState({glossary:true})),
+      btn('Evidence', this.state.evidence, ()=>this.setState({evidence:true})),
+      btn(this.state.staticMode?'Article':'Scrolly', false, ()=>this.setState({staticMode:!this.state.staticMode})));
+  }
+  rail(){
+    const secs=this.sections(); const steps=this.flat(); const curSec=steps[this.state.active]?steps[this.state.active].sectionKey:'hook';
+    return h('div',{style:{position:'fixed',left:16,top:'50%',transform:'translateY(-50%)',zIndex:35,display:'flex',flexDirection:'column',gap:9}},
+      secs.map(s=>{ const on=s.key===curSec; return h('button',{key:s.key,onClick:()=>this.go('sec-'+s.key),title:s.num+' \u2014 '+s.title,'aria-label':s.title,
+        style:{display:'flex',alignItems:'center',gap:8,background:'none',border:'none',cursor:'pointer',padding:0}},
+        h('span',{style:{width:on?11:8,height:on?11:8,borderRadius:11,background:on?C.teal:C.line,transition:this.trans(),flexShrink:0}}),
+        h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:on?C.teal:'transparent',transition:this.trans(),whiteSpace:'nowrap',fontWeight:600}}, s.num)); }));
+  }
+
+  // ================= HERO + FINAL =================
+  hero(){
+    return h('div',{id:'top',style:{position:'relative',minHeight:'100vh',display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'96px 8vw 66px',overflow:'hidden',background:'#0d1714'}},
+      h('img',{src:'assets/pantanal-hero.svg',alt:'Stylised dusk over the Pantanal wetland \u2014 a low sun, treeline silhouette and reflective water with reeds and birds',style:{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',opacity:1,transform:this.state.reduced?'none':'scale(1.05)',transition:this.state.reduced?'none':'transform 20s ease'}}),
+      h('div',{style:{position:'absolute',inset:0,background:'linear-gradient(180deg,rgba(13,23,20,.12) 0%,rgba(13,23,20,.18) 38%,rgba(13,23,20,.72) 78%,rgba(13,23,20,.9) 100%)'}}),
+      h('div',{style:{position:'relative',maxWidth:800}},
+        h('div',{style:{fontFamily:'Libre Franklin,sans-serif',fontWeight:700,fontSize:12.5,letterSpacing:'.24em',color:'#9fc4b6',textTransform:'uppercase',marginBottom:20}},'An interactive reading \u00b7 \u224812 min'),
+        h('h1',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:'clamp(34px,5.6vw,62px)',lineHeight:1.03,letterSpacing:'-.012em',color:'#f4eddd',margin:'0 0 22px',textWrap:'balance'}},'Can Generative AI Improve Bioacoustic Classification?'),
+        h('p',{style:{fontFamily:'Newsreader,serif',fontSize:'clamp(18px,2.1vw,23px)',fontStyle:'italic',fontWeight:400,color:'#d9cdb4',lineHeight:1.5,maxWidth:670,margin:'0 0 22px',textWrap:'pretty'}},
+          'Can a general-purpose AI audio generator produce synthetic bird, frog, and insect calls realistic enough to help a classifier recognise a wetland\u2019s rarest species, the ones conservation most needs to find?'),
+        h('div',{style:{fontFamily:'Libre Franklin,sans-serif',fontSize:12.5,letterSpacing:'.03em',color:'#9a9079',marginBottom:30}},'Ademar Tutor \u00b7 COMPX525, University of Waikato \u00b7 BirdCLEF-2026 \u00b7 Pantanal'),
+        h('div',{style:{padding:'16px 20px',background:'rgba(18,30,26,.5)',border:'1px solid rgba(159,196,182,.24)',borderRadius:8,maxWidth:600,marginBottom:30,backdropFilter:'blur(5px)'}},
+          h('div',{style:{fontFamily:'Libre Franklin,sans-serif',fontWeight:700,fontSize:10.5,letterSpacing:'.16em',textTransform:'uppercase',color:'#9fc4b6',marginBottom:7}},'Why this matters'),
+          h('div',{style:{fontFamily:'Newsreader,serif',fontSize:15.5,color:'#e7ddc6',lineHeight:1.62}},'Passive acoustic monitoring can survey ecosystems at scale, but rare species have too few recordings to learn from, and they are exactly the ones conservation needs to detect. If synthetic audio can fill that gap, it changes what is possible for biodiversity monitoring.')),
+        h('div',{style:{display:'flex',gap:18,alignItems:'center',flexWrap:'wrap'}},
+          h('button',{onClick:()=>this.go('sec-hook'),style:{padding:'13px 28px',borderRadius:9,background:C.teal,color:'#fff',border:'none',cursor:'pointer',fontFamily:'Libre Franklin,sans-serif',fontWeight:600,fontSize:15}},'Start reading  \u2193'),
+          h('a',{href:'report/main.pdf',target:'_blank',style:{fontFamily:'Libre Franklin,sans-serif',fontSize:13.5,color:'#cbd8cf',fontWeight:600}},'Open the full paper (31 pp)'))));
+  }
+  calibration(){
+    return h('div',{style:{maxWidth:600}},
+      h('div',{style:{fontSize:12.5,color:C.mut,marginBottom:9}},'How much background should we assume? (change any time)'),
+      h('div',{style:{display:'flex',flexWrap:'wrap',gap:8}},
+        LEVELS.map((l,i)=>h('button',{key:i,onClick:()=>this.setState({level:i}),
+          style:{padding:'8px 13px',borderRadius:20,border:'1px solid '+(this.state.level===i?C.teal:C.line),background:this.state.level===i?C.tealBg:C.card,color:this.state.level===i?C.teal:C.sub,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:12.5,fontWeight:this.state.level===i?600:400},'aria-pressed':this.state.level===i}, l))));
+  }
+  finalScreen(){
+    const takes=[
+      ['Generative AI can improve bioacoustic classification \u2014 but conditionally, not uniformly.','\u00a77.2'],
+      ['It helps only where data is scarce AND the generator can pass verification \u2014 chiefly amphibians here, not birds.','Tables 7, 9'],
+      ['The largest gain is on the rarest classes: at \u22645 training examples, per-class AUC rose from 0.666 to 0.890.','Table 8'],
+      ['It cannot rescue single-example classes, and ranking gains (macro-AUC) can come with a single-label cost (top-1).','\u00a76, Table 10']
+    ];
+    const bib='@misc{tutor2026genai,\n  author = {Ademar Tutor},\n  title  = {Can Generative AI Improve Bioacoustic Classification? A Study on BirdCLEF-2026},\n  school = {University of Waikato, COMPX525},\n  year   = {2026}\n}';
+    return h('div',{id:'sec-synthesis-final',style:{padding:'90px 8vw 110px',background:C.ink,color:'#f4f1ea'}},
+      h('div',{style:{maxWidth:860,margin:'0 auto'}},
+        h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:12,letterSpacing:'.18em',color:C.tealL,textTransform:'uppercase',marginBottom:14}},'13 \u00b7 What to remember'),
+        h('h2',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:'clamp(26px,4vw,40px)',margin:'0 0 12px',lineHeight:1.15}},'Synthetic audio is a targeted tool, not a cure.'),
+        h('p',{style:{fontSize:15.5,lineHeight:1.7,color:'#cfd3c9',maxWidth:680,margin:'0 0 36px'}},'Used with a BirdNET verification gate, AudioLDM 2 audio lifted exactly the classes that needed it most \u2014 the rarest, data-starved species \u2014 but only for taxa the generator could render convincingly. The benefit is selective, and one headline metric can hide a trade-off.'),
+        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:40}},
+          takes.map((t,i)=>h('div',{key:i,style:{padding:'18px 20px',background:'rgba(255,255,255,.05)',borderRadius:10,border:'1px solid rgba(255,255,255,.1)'}},
+            h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:22,color:C.tealL,marginBottom:8}}, (i+1).toString().padStart(2,'0')),
+            h('div',{style:{fontSize:14,lineHeight:1.55,color:'#eceee6'}}, t[0]),
+            h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.amber,marginTop:10}}, t[1])))),
+        h('div',{style:{display:'flex',gap:14,flexWrap:'wrap',alignItems:'center'}},
+          h('button',{onClick:()=>{navigator.clipboard&&navigator.clipboard.writeText(bib);this.setState({copied:true});setTimeout(()=>this.setState({copied:false}),1600);},
+            style:{padding:'12px 22px',borderRadius:9,background:C.teal,color:'#fff',border:'none',cursor:'pointer',fontFamily:'Libre Franklin',fontWeight:600,fontSize:14}}, this.state.copied?'Copied \u2713':'Copy BibTeX citation'),
+          h('a',{href:'report/main.pdf',target:'_blank',style:{padding:'12px 22px',borderRadius:9,border:'1px solid rgba(255,255,255,.25)',color:'#f4f1ea',fontWeight:600,fontSize:14,textDecoration:'none'}},'Open report/main.pdf'),
+          h('button',{onClick:()=>this.go('top'),style:{background:'none',border:'none',color:C.tealL,cursor:'pointer',fontSize:13.5,fontWeight:600}},'\u2191 Back to top')),
+        h('pre',{className:'om-scroll',style:{marginTop:24,padding:'16px',background:'rgba(0,0,0,.25)',borderRadius:8,fontFamily:"'IBM Plex Mono',monospace",fontSize:11.5,color:'#bcc4b8',overflowX:'auto',lineHeight:1.6}}, bib)));
+  }
+
+  // ================= AUDIO (interlude in section 8/9) =================
+  audioAB(){
+    const r=this.state.abReal;
+    return h('div',{style:{maxWidth:560,margin:'10px 0 0',padding:'18px 20px',background:C.card,border:'1px solid '+C.line,borderRadius:10}},
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.tealL,marginBottom:8}},'LISTEN \u00b7 REAL vs SYNTHETIC \u00b7 Waxy Monkey Tree Frog (class 23724)'),
+      h('div',{style:{display:'flex',gap:8,marginBottom:14}},
+        ['Real focal','Synthetic (verified)'].map((l,i)=>h('button',{key:i,onClick:()=>this.setState({abReal:i===0}),
+          style:{flex:1,padding:'9px',borderRadius:7,border:'1px solid '+((r===(i===0))?C.teal:C.line),background:(r===(i===0))?C.tealBg:C.bg,color:(r===(i===0))?C.teal:C.sub,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:12.5,fontWeight:600},'aria-pressed':r===(i===0)}, l))),
+      h('audio',{controls:true,style:{width:'100%',height:36},key:r?'real':'syn'},
+        h('source',{src:'assets/audio/frog-23724-'+(r?'real':'synthetic')+'.mp3',type:'audio/mpeg'}),
+        h('source',{src:'assets/audio/frog-23724-'+(r?'real':'synthetic')+'.ogg',type:'audio/ogg'})),
+      h('div',{style:{marginTop:10,padding:'10px 12px',background:C.bg,borderRadius:6,fontSize:11.5,color:C.mut,lineHeight:1.5}},
+        h('b',{style:{color:r?C.teal:'#8a5f15'}}, r?'Real focal recording. ':'Synthetic AudioLDM 2 clip. '),
+        r?'A clean, sharply repeated call \u2014 the kind of structure the generator must reproduce.'
+         :'This clip passed the BirdNET filter and entered training, yet reproduces only the broad spectral envelope \u2014 the sharp, repeated call structure is missing.'),
+      h('div',{style:{marginTop:8,fontFamily:"'Libre Franklin',sans-serif",fontSize:10,color:C.faint}},'Audio file expected at assets/audio/ \u2014 drop in to enable playback. Transcript: a short, pulsing amphibian call.'));
+  }
+
+  // ===== Five-species gallery: the keep-rate chart, made audible (§08 mount) =====
+  filterSpecies(){
+    // accent + chip colours mirror the §08 stFilter bars: Reptilia tealL, Amphibia amber, Mammalia amber, Aves rust
+    return [
+      { key:'caiman', common:'Yacare caiman', sci:'Caiman yacare', taxon:'Reptilia', keep:'78.1% kept', color:C.tealL,
+        photo:'https://upload.wikimedia.org/wikipedia/commons/c/c9/Yacare_Caiman_%28Caiman_Yacare%29_-_Flickr_-_berniedup.jpg',
+        alt:"A Yacare caiman resting at the water\u2019s edge in the Pantanal.",
+        credit:'Photo: \u00a9 Bernard DUPONT \u00b7 CC BY-SA 2.0 \u00b7 Wikimedia Commons',
+        facts:['Crocodilia \u00b7 Alligatoridae','Pantanal \u2014 N Argentina, Bolivia, S Brazil, Paraguay','IUCN: Least Concern \u00b7 low bellowing calls'],
+        realSrc:'assets/audio/species/focal-iNat1460166.ogg',
+        synthSrc:'assets/audio/species/audioldm2_116570_000.ogg',
+        realNote:'a low, resonant bellow.',
+        synthNote:'broadly plausible \u2014 the generator reaches a believable low rumble, which is why most reptile clips passed the filter.' },
+      { key:'mehelyi', common:null, sci:'Chiasmocleis mehelyi', taxon:'Amphibia', keep:'7.3% kept', color:C.amber,
+        photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/322196682/original.jpg',
+        alt:'A small microhylid frog, Chiasmocleis mehelyi, photographed in the Pantanal.',
+        credit:'Photo: \u00a9 Henrique Nogueira \u00b7 CC BY \u00b7 iNaturalist',
+        facts:['Anura \u00b7 Microhylidae','Pantanal of Brazil (Mato Grosso, Mato Grosso do Sul); Bolivia/Paraguay unconfirmed','IUCN: Data Deficient'],
+        realSrc:'assets/audio/species/BC2026_Train_0063_S19_20241214_190000.ogg',
+        synthSrc:'assets/audio/species/audioldm2_25073_000.ogg',
+        realNote:'a sharp, regularly pulsed call.',
+        synthNote:'only the broad spectral envelope survives; the crisp pulse structure is blurred \u2014 which is why so few amphibian clips passed.' },
+      { key:'guarani', common:'Guaran\u00ed leaf-litter frog', sci:'Adenomera guarani', taxon:'Amphibia', keep:'7.3% kept', color:C.amber,
+        photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/454870310/original.jpeg',
+        alt:'The Guaran\u00ed leaf-litter frog, Adenomera guarani, on leaf litter.',
+        credit:'Photo: \u00a9 Ricardo Reques \u00b7 CC BY-NC \u00b7 iNaturalist',
+        // NOTE for author: this iNaturalist image is CC BY-NC (non-commercial). Fine for coursework; replace before any commercial use.
+        facts:['Anura \u00b7 Leptodactylidae (described 2023)','Paraguay, Argentina, Brazil (Chaco / Paraguay-basin region)','IUCN: not yet evaluated \u00b7 a pulsating single note, ~73\u2013147\u00d7 per minute'],
+        realSrc:'assets/audio/species/soundscape-BC2026_Train_0011_S03_20211114_200000.ogg',
+        synthSrc:'assets/audio/species/audioldm2_1491113_000.ogg',
+        realNote:'a sharp, regularly pulsed call.',
+        synthNote:'only the broad spectral envelope survives; the crisp pulse structure is blurred \u2014 which is why so few amphibian clips passed.' },
+      { key:'azureus', common:'Southern Orange-legged Leaf Frog', sci:'Pithecopus azureus', syn:'syn. Phyllomedusa azurea', taxon:'Amphibia', keep:'7.3% kept', color:C.amber,
+        photo:'https://upload.wikimedia.org/wikipedia/commons/e/e3/Phyllomedusa_azurea.jpg',
+        alt:'The southern orange-legged leaf frog, Pithecopus azureus, on a branch.',
+        credit:'Photo: \u00a9 Ariovaldo Giaretta \u00b7 CC BY-SA 2.5 \u00b7 Wikimedia Commons',
+        facts:['Anura \u00b7 Phyllomedusidae','Brazil, Paraguay, Argentina, Bolivia, Peru \u00b7 Pantanal / Cerrado','IUCN: Data Deficient \u00b7 short pulsed advertisement notes; long pulsed aggressive notes'],
+        realSrc:'assets/audio/species/BC2026_Train_0011_S03_20211114_200000.ogg',
+        synthSrc:'assets/audio/species/audioldm2_517063_000.ogg',
+        realNote:'a sharp, regularly pulsed call.',
+        synthNote:'only the broad spectral envelope survives; the crisp pulse structure is blurred \u2014 which is why so few amphibian clips passed.' },
+      { key:'capuchin', common:'Hooded capuchin', sci:'Sapajus cay', taxon:'Mammalia', keep:'6.4% kept', color:C.amber,
+        photo:'https://upload.wikimedia.org/wikipedia/commons/4/47/Sapajus_libidinosus_paraguayanus.jpg',
+        alt:'A hooded capuchin, Sapajus cay, perched on a branch.',
+        credit:'Photo: \u00a9 Alexandre Pereira \u00b7 CC BY-SA 2.0 \u00b7 Wikimedia Commons',
+        facts:['Primates \u00b7 Cebidae','E Paraguay, SE Bolivia, N Argentina, Brazil (Mato Grosso / MS) \u00b7 Pantanal','IUCN: status disputed (omitted)'],
+        realSrc:'assets/audio/species/focal-iNat22239.ogg',
+        synthSrc:'assets/audio/species/audioldm2_516975_000.ogg',
+        realNote:'abrupt primate calls over forest noise.',
+        synthNote:'an approximate texture rather than a recognisable call \u2014 consistent with the low mammal keep-rate.' }
+    ];
+  }
+  filterGallery(){
+    const species = this.filterSpecies();
+    const mono={ fontFamily:"'Libre Franklin',sans-serif" };
+    const card = (sp)=>{
+      const err=!!this.state.photoErr['sp-'+sp.key];
+      return h('div',{key:sp.key,style:{background:C.card,border:'1px solid '+C.line,borderLeft:'4px solid '+sp.color,
+        borderRadius:10,boxShadow:'0 4px 16px rgba(0,0,0,.06)',padding:'16px 18px',marginBottom:14}},
+        // header row
+        h('div',{style:{display:'flex',gap:13,alignItems:'flex-start',marginBottom:11}},
+          h('div',{style:{flexShrink:0,width:84}},
+            h('button',{onClick:()=>this.setState({speciesModal:sp.key}),'aria-label':'More about '+(sp.common||sp.sci)+' — opens details',title:'More about '+(sp.common||sp.sci),
+              style:{position:'relative',padding:0,border:'none',background:'none',cursor:'pointer',borderRadius:8,lineHeight:0,display:'block'}},
+              err
+                ? h('div',{'aria-label':sp.alt,role:'img',style:Object.assign({},mono,{width:84,height:84,borderRadius:8,background:sp.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9.5,color:'#fff',textAlign:'center',padding:6})}, sp.taxon)
+                : h('img',{src:sp.photo,alt:sp.alt,loading:'lazy',
+                    onError:()=>{ const p=Object.assign({},this.state.photoErr); p['sp-'+sp.key]=true; this.setState({photoErr:p}); },
+                    style:{width:84,height:84,borderRadius:8,objectFit:'cover',border:'1px solid '+C.line,display:'block'}}),
+              h('span',{'aria-hidden':true,style:{position:'absolute',right:5,bottom:5,width:20,height:20,borderRadius:'50%',background:'rgba(20,25,20,.62)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontFamily:'Libre Franklin',fontWeight:600}},'i')),
+            h('div',{style:Object.assign({},mono,{fontSize:8.5,color:C.faint,marginTop:5,lineHeight:1.35})}, sp.credit)),
+          h('div',{style:{minWidth:0,flex:1}},
+            sp.common
+              ? h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:17,color:C.ink,lineHeight:1.2}}, sp.common)
+              : h('div',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontWeight:500,fontSize:16,color:C.ink,lineHeight:1.2}}, sp.sci),
+            sp.common
+              ? h('div',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontSize:13,color:C.mut,marginTop:1}}, sp.sci+(sp.syn?'  \u00b7  '+sp.syn:''))
+              : h('div',{style:Object.assign({},mono,{fontSize:10,color:C.faint,marginTop:2})},'no verified common name'),
+            h('div',{style:{display:'flex',alignItems:'center',gap:8,margin:'7px 0 0',flexWrap:'wrap'}},
+              h('span',{style:Object.assign({},mono,{fontSize:9.5,letterSpacing:'.07em',textTransform:'uppercase',color:'#fff',background:sp.color,padding:'2px 8px',borderRadius:4})}, sp.taxon),
+              h('span',{style:Object.assign({},mono,{fontSize:11,color:C.sub,fontWeight:600})}, sp.keep)))),
+        // facts
+        h('div',{style:{marginBottom:13}},
+          sp.facts.map((f,i)=>h('div',{key:i,style:{fontSize:12,color:C.sub,lineHeight:1.5}}, f))),
+        // player
+        h(WaveAB,{key:sp.key+'-ws', species:sp.common||sp.sci, realSrc:sp.realSrc, synthSrc:sp.synthSrc,
+          realNote:sp.realNote, synthNote:sp.synthNote, reduced:this.state.reduced}));
+    };
+    return h('div',{style:{maxWidth:560,margin:'10px 0 0'}},
+      // block header
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,letterSpacing:'.12em',color:C.tealL,marginBottom:8}},'LISTEN \u00b7 WHAT THE FILTER LET THROUGH'),
+      h('div',{style:{fontFamily:'Fraunces,serif',fontSize:16,fontWeight:500,lineHeight:1.32,color:C.ink,marginBottom:16,textWrap:'pretty'}},'Each synthetic clip is the model\u2019s attempt at the animal\u2019s call together with the field around it. Press play to compare it with the real recording.'),
+      species.map(card),
+      // closing "no birds" note
+      h('div',{style:{padding:'13px 15px',background:'#f3e3dd',borderLeft:'4px solid '+C.rust,borderRadius:8,marginTop:2}},
+        h('span',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,letterSpacing:'.04em',fontWeight:600,color:C.rust}},'Aves \u00b7 0.0% kept. '),
+        h('span',{style:{fontSize:12.5,color:C.sub,lineHeight:1.55}},'There is no bird card here \u2014 not an omission, but the finding. BirdNET rejected every generated bird clip, so none entered training. The verifier is strictest where it is most expert.')));
+  }
+
+  // ================= STATIC ARTICLE =================
+  staticArticle(){
+    const steps=this.flat();
+    return h('div',{className:'om-scroll',style:{maxWidth:720,margin:'0 auto',padding:'90px 24px 120px'}},
+      h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.tealL,marginBottom:8}},'STATIC ARTICLE VERSION \u2014 no scroll effects'),
+      h('h1',{style:{fontFamily:'Fraunces,serif',fontSize:34,fontWeight:700,lineHeight:1.15,marginTop:0}},'Can Generative AI Improve Bioacoustic Classification?'),
+      h('p',{style:{color:C.mut,fontSize:14}},'Ademar Tutor \u00b7 COMPX525, University of Waikato \u00b7 ',h('a',{href:'report/main.pdf',target:'_blank',style:{color:C.teal}},'report/main.pdf')),
+      this.sections().map(s=>h('section',{key:s.key,style:{marginTop:40}},
+        h('h2',{style:{fontFamily:'Fraunces,serif',fontSize:23,fontWeight:600,color:C.teal,borderBottom:'1px solid '+C.line,paddingBottom:8}}, s.num+'. '+s.title),
+        s.steps.map((st,i)=>h('div',{key:i,style:{marginTop:16}},
+          h('p',{style:{fontFamily:'Newsreader,serif',fontSize:19,lineHeight:1.62,margin:0,color:C.ink}}, st.main),
+          st.further?h('p',{style:{fontSize:14.5,lineHeight:1.6,color:C.sub,marginTop:6}}, st.further):null,
+          st.tech?h('p',{style:{fontSize:13.5,lineHeight:1.6,color:C.mut,marginTop:6,fontStyle:'italic'}}, st.tech):null,
+          h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:CLAIM[st.ev.t].c,marginTop:6}}, CLAIM[st.ev.t].label+' \u00b7 '+st.ev.s))))));
+  }
+
+  // ================= ROOT RENDER =================
+  renderApp(){
+    if(this.state.staticMode){
+      return h('div',{style:{background:C.bg,minHeight:'100vh'}}, this.topBar(), this.staticArticle(), this.renderGlossaryDrawer(), this.renderEvidenceDrawer(), this.renderAnimalModal(), this.renderAudioLDMModal(), this.renderSpeciesModal());
+    }
+    const steps=this.flat();
+    const audioAt = steps.findIndex(s=>s.sectionKey==='filter' && s.li===1);
+    return h('div',{style:{background:C.bg,minHeight:'100vh', filter:this.state.hc?'contrast(1.15)':'none'}},
+      this.topBar(), this.rail(),
+      this.hero(),
+      h('div',{style:{display:'flex',gap:'4vw',maxWidth:1320,margin:'0 auto',padding:'0 60px 0 80px',alignItems:'flex-start'}},
+        // story column
+        h('div',{style:{flex:'0 0 42%',maxWidth:480,paddingBottom:'30vh'}},
+          steps.map((st,idx)=>[
+            st.li===0?h('div',{key:'anchor'+st.sectionKey,id:'sec-'+st.sectionKey,style:{position:'relative',top:-60,height:0}}):null,
+            this.renderStep(st, idx),
+            idx===audioAt?h('div',{key:'audio',style:{paddingBottom:40}}, this.filterGallery()):null
+          ])),
+        // sticky stage
+        h('div',{style:{flex:1,position:'sticky',top:64,height:'calc(100vh - 84px)',paddingTop:20}},
+          h('div',{style:{width:'100%',height:'100%',borderRadius:12,overflow:'hidden',border:'1px solid '+C.line,boxShadow:'0 8px 30px rgba(31,40,33,.07)',background:C.panel}},
+            this.renderStage()))),
+      this.finalScreen(),
+      this.techStack(),
+      this.renderGlossaryDrawer(), this.renderEvidenceDrawer(), this.renderAnimalModal(), this.renderAudioLDMModal(), this.renderSpeciesModal());
+  }
+
+  renderVals(){ return { app: this.renderApp() }; }
+}
+</script>
+</body>
+</html>

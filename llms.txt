@@ -14,6 +14,7 @@
 ## Reports
 
 - [Exam Timetabling as a Graph Colouring Problem](https://www.ademartutor.com/reports/dsatur): Interactive report comparing the DSATUR colouring heuristic with Google OR-Tools CP-SAT for scheduling university exams — heuristic speed versus solver-proven optimality. COMPX546 Graph Theory, University of Waikato.
+- [Can Generative AI Improve Bioacoustic Classification?](https://www.ademartutor.com/research/generative-ai-bioacoustics-rare-species): Interactive explainer testing whether AudioLDM 2 synthetic calls, verified by BirdNET, improve rare-species bioacoustic classification on BirdCLEF-2026 — best macro-AUC 0.9549, with the gain concentrated in the rarest classes (0.666→0.890 for classes with ≤5 examples). COMPX525, University of Waikato.
 
 ## Writing
 

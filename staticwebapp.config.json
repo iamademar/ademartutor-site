@@ -18,6 +18,12 @@
       }
     },
     {
+      "route": "/research/generative-ai-bioacoustics-rare-species*",
+      "headers": {
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://unpkg.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' blob: https://fonts.gstatic.com; img-src 'self' data: blob: https://upload.wikimedia.org https://inaturalist-open-data.s3.amazonaws.com https://cdn.prod.website-files.com https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' blob: https://unpkg.com https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://*.analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com; media-src 'self' blob:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+      }
+    },
+    {
       "route": "/assets/*",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
