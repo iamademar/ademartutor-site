@@ -115,6 +115,10 @@
                                 · in progress
                             </li>
                             <li>
+                                <a href="#bioacoustics">Generative AI for Bioacoustics</a> ·
+                                research report
+                            </li>
+                            <li>
                                 <a href="#weka-api">WEKA API Server</a> · REST
                                 layer over WEKA
                             </li>
@@ -187,6 +191,68 @@
                                     <div class="proj-links">
                                         <span class="muted"
                                             >repo link when public</span
+                                        >
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="proj-row" id="bioacoustics" tabindex="0">
+                                <div class="proj-head">
+                                    <h3 class="proj-title">
+                                        Generative AI for Bioacoustics
+                                        <span class="arrow" aria-hidden="true"
+                                            >→</span
+                                        >
+                                    </h3>
+                                    <span class="proj-meta"
+                                        >2026 · research report</span
+                                    >
+                                </div>
+                                <p class="proj-summary">
+                                    An interactive explainer testing whether
+                                    AudioLDM 2 synthetic calls, verified by
+                                    BirdNET, improve rare-species bioacoustic
+                                    classification on BirdCLEF-2026. Generate
+                                    candidate calls, gate each through a
+                                    verifier, keep only what passes, and measure
+                                    where the gain lands. COMPX525, University of
+                                    Waikato.
+                                </p>
+                                <div class="proj-detail">
+                                    <ul class="proj-bullets">
+                                        <li>
+                                            Best configuration (fine-tuned model
+                                            with synthetic audio) reaches
+                                            macro-AUC 0.9549
+                                        </li>
+                                        <li>
+                                            Gain concentrates in the rarest
+                                            classes: for classes with ≤5
+                                            examples, mean per-class AUC rises
+                                            from 0.666 to 0.890
+                                        </li>
+                                        <li>
+                                            BirdNET verification gate is strict —
+                                            of 3,484 generated clips, only 800
+                                            (23%) passed, with keep-rate
+                                            splitting sharply by taxon
+                                        </li>
+                                        <li>
+                                            Methods: AudioLDM 2 · BirdNET ·
+                                            EfficientNet-b0 · frozen embeddings +
+                                            logistic regression
+                                        </li>
+                                    </ul>
+                                    <div class="proj-links">
+                                        <a
+                                            href="/research/generative-ai-bioacoustics-rare-species"
+                                            >interactive report</a
+                                        >
+                                        <a
+                                            href="/research/generative-ai-bioacoustics-rare-species/report/main.pdf"
+                                            target="_blank"
+                                            rel="noopener"
+                                            >full paper (31 pp)</a
                                         >
                                     </div>
                                 </div>
@@ -508,6 +574,20 @@
                                     walks non-experts through a real ML workflow (load → profile →
                                     train → evaluate → deploy). Planner-with-revision over a typed tool
                                     registry, sandboxed execution, full prompt/tool-call traces
+                                </p>
+                            </a>
+                            <a class="proj-card" href="#bioacoustics">
+                                <span class="proj-meta"
+                                    >2026 · research report</span
+                                >
+                                <h3 class="proj-title">
+                                    Generative AI for Bioacoustics
+                                </h3>
+                                <p class="proj-summary">
+                                    Do AudioLDM 2 synthetic calls, verified by
+                                    BirdNET, improve rare-species classification
+                                    on BirdCLEF-2026? Best macro-AUC 0.9549; the
+                                    rarest classes climb from 0.666 to 0.890.
                                 </p>
                             </a>
                             <a class="proj-card" href="#weka-api">
