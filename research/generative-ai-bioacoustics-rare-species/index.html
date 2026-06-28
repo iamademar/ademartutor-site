@@ -971,6 +971,46 @@ class Component extends DCLogic {
         h('div',{style:{columns:'330px',columnGap:'22px'}}, cats.map(card))));
   }
 
+  // ================= PERSONAL NOTE (closing block) =================
+  personalNote(){
+    const photoErr=!!this.state.photoErr['author-waikato'];
+    const gradeErr=!!this.state.photoErr['grade-feedback'];
+    const mono={ fontFamily:"'Libre Franklin',sans-serif" };
+    return h('div',{id:'sec-personal',style:{padding:'84px 8vw 110px',background:C.bg,borderTop:'1px solid '+C.line}},
+      h('div',{style:{maxWidth:1140,margin:'0 auto'}},
+        h('div',{style:Object.assign({},mono,{fontSize:12,letterSpacing:'.18em',color:C.tealL,textTransform:'uppercase',marginBottom:14})},'15 · From the author'),
+        h('h2',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:'clamp(26px,4vw,40px)',margin:'0 0 12px',lineHeight:1.15,color:C.ink}},'A personal note'),
+        h('div',{style:{display:'grid',gridTemplateColumns:'minmax(0,0.85fr) minmax(0,1.15fr)',gap:30,alignItems:'start'}},
+          // ----- left: author photo + note -----
+          h('div',{style:{breakInside:'avoid'}},
+            h('div',{style:{background:C.card,border:'1px solid '+C.line,borderRadius:14,overflow:'hidden',boxShadow:'0 8px 30px rgba(31,40,33,.07)'}},
+              photoErr
+                ? h('div',{'aria-label':'Ademar Tutor at the University of Waikato',role:'img',style:Object.assign({},mono,{width:'100%',height:300,background:C.teal,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:13,textAlign:'center',padding:20})},'Ademar Tutor · University of Waikato')
+                : h('img',{src:'assets/author-waikato.jpg',alt:'Ademar Tutor outside the University of Waikato sign, in a flat cap and sunglasses under a blue sky.',loading:'lazy',
+                    onError:()=>{ const p=Object.assign({},this.state.photoErr); p['author-waikato']=true; this.setState({photoErr:p}); },
+                    style:{width:'100%',display:'block',objectFit:'cover',maxHeight:440}}),
+              h('div',{style:{padding:'18px 20px 20px'}},
+                h('div',{style:Object.assign({},mono,{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',color:C.tealL,marginBottom:8})},'Hi, I’m Ademar 👋'),
+                h('p',{style:{fontFamily:'Newsreader,serif',fontSize:16.5,lineHeight:1.62,color:C.ink,margin:'0 0 12px'}},'This started life as a project for our ',h('b',{style:{color:C.teal}},'Deep Learning'),' class (COMPX525) at the University of Waikato. That’s me out front of the sign, equal parts proud and sleep-deprived.'),
+                h('p',{style:{fontFamily:'Newsreader,serif',fontSize:16.5,lineHeight:1.62,color:C.sub,margin:0}},'For the first few weeks I worked on the project by running the code overnight on my MacBook. That was enough to get part A1 of the experiment through, but it didn’t hold up for the other parts. It was probably 1–2 weeks in when I realized there was no optimization I could do that would make the code run on my MacBook; I needed to shift to actual GPUs. Hence, I moved to Google Colab L4 GPUs. The ',h('a',{href:'https://arxiv.org/abs/2010.15581',target:'_blank',rel:'noopener noreferrer',style:{color:C.teal,textDecoration:'underline'}},'compute schism'),' does exist!!! And because Colab sometimes drops the session midway when my MacBook goes to sleep, I had to keep it awake with ',h('code',{style:Object.assign({},mono,{fontSize:14.5,background:C.tealBg,padding:'1px 6px',borderRadius:4,color:C.teal})},'caffeinate -dimsu'),'.'))),
+            h('div',{style:Object.assign({},mono,{fontSize:9.5,color:C.faint,marginTop:9,lineHeight:1.4})},'Photo: the author, outside the University of Waikato, Hamilton — Te Whare Wānanga o Waikato.')),
+          // ----- right: grade / feedback -----
+          h('div',{style:{breakInside:'avoid'}},
+            h('div',{style:{display:'inline-flex',alignItems:'center',gap:10,background:C.tealBg,border:'1px solid '+C.teal+'44',borderRadius:30,padding:'7px 16px',marginBottom:16}},
+              h('span',{style:Object.assign({},mono,{fontSize:24,fontWeight:700,color:C.teal,lineHeight:1})},'100'),
+              h('span',{style:Object.assign({},mono,{fontSize:11,letterSpacing:'.1em',textTransform:'uppercase',color:C.teal,fontWeight:600})},'out of 100 · full marks 🎉')),
+            h('div',{style:{background:C.card,border:'1px solid '+C.line,borderRadius:14,overflow:'hidden',boxShadow:'0 8px 30px rgba(31,40,33,.07)',marginBottom:16}},
+              gradeErr
+                ? h('div',{'aria-label':'Grade screenshot: 100.00 / 100.00',role:'img',style:Object.assign({},mono,{width:'100%',height:200,background:C.panel,display:'flex',alignItems:'center',justifyContent:'center',color:C.sub,fontSize:13,textAlign:'center',padding:20})},'Grade: 100.00 / 100.00')
+                : h('img',{src:'assets/grade-feedback.png',alt:'Grade feedback screenshot: 100.00 / 100.00, graded 28 June 2026, with marker comments.',loading:'lazy',
+                    onError:()=>{ const p=Object.assign({},this.state.photoErr); p['grade-feedback']=true; this.setState({photoErr:p}); },
+                    style:{width:'100%',display:'block'}})),
+            h('blockquote',{style:{margin:0,padding:'18px 22px',background:C.tealBg,borderLeft:'4px solid '+C.teal,borderRadius:'0 10px 10px 0'}},
+              h('div',{style:Object.assign({},mono,{fontSize:10.5,letterSpacing:'.12em',textTransform:'uppercase',color:C.teal,fontWeight:600,marginBottom:8})},'Marker’s feedback'),
+              h('p',{style:{fontFamily:'Newsreader,serif',fontStyle:'italic',fontSize:16.5,lineHeight:1.6,color:C.ink,margin:0}},'“This report demonstrates good research practice, with a clearly motivated question, a rigorous experimental design (clean two-by-two matrix), and thorough, data-driven analysis that convincingly answers the stated research objective.”')))),
+        h('p',{style:Object.assign({},mono,{fontSize:13.5,color:C.mut,marginTop:34,textAlign:'center'})},'Thanks for reading all the way to the end. — Ademar')));
+  }
+
   // ================= STORY COLUMN =================
   renderStep(st, idx){
     const a=this.state.active===idx;
@@ -1375,6 +1415,7 @@ class Component extends DCLogic {
             this.renderStage()))),
       this.finalScreen(),
       this.techStack(),
+      this.personalNote(),
       this.renderGlossaryDrawer(), this.renderEvidenceDrawer(), this.renderAnimalModal(), this.renderAudioLDMModal(), this.renderSpeciesModal());
   }
 
