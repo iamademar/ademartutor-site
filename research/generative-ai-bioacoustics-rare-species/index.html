@@ -104,7 +104,7 @@
   <h1 style="font-size:34px;line-height:1.15;margin:8px 0 16px">Can Generative AI Improve Bioacoustic Classification?</h1>
   <p style="font-size:18px;color:#43463c"><em>Can a general-purpose AI audio generator produce synthetic bird, frog, and insect calls realistic enough to help a classifier recognise a wetland's rarest species, the ones conservation most needs to find?</em></p>
   <p>Passive acoustic monitoring can survey ecosystems at scale, but rare species have too few recordings to learn from, and they are exactly the ones conservation needs to detect. If synthetic audio can fill that gap, it changes what is possible for biodiversity monitoring. This study tests that idea on the BirdCLEF-2026 target set: AudioLDM 2 generates candidate calls, BirdNET verifies them, and only the clips that pass join training.</p>
-  <p style="font-family:system-ui,sans-serif;font-size:14px;color:#76776b">By <strong>Ademar Tutor</strong> · COMPX525, University of Waikato · 19 June 2026 · <a href="report/main.pdf" style="color:#2c5a4f">Read the full paper (31 pp)</a></p>
+  <p style="font-family:system-ui,sans-serif;font-size:14px;color:#76776b">By <strong>Ademar Tutor</strong> · COMPX525, University of Waikato · 19 June 2026 · <a href="report/main.pdf" style="color:#2c5a4f">Read the full paper (31 pp)</a> · <a href="https://github.com/iamademar/birdclef-2026-synthetic-audio-augmentation" target="_blank" rel="noopener" style="color:#2c5a4f">Code on GitHub</a></p>
 
   <h2 style="font-size:22px;margin:28px 0 10px">Key findings</h2>
   <ul style="padding-left:20px">
@@ -1213,6 +1213,7 @@ class Component extends DCLogic {
           h('button',{onClick:()=>{navigator.clipboard&&navigator.clipboard.writeText(bib);this.setState({copied:true});setTimeout(()=>this.setState({copied:false}),1600);},
             style:{padding:'12px 22px',borderRadius:9,background:C.teal,color:'#fff',border:'none',cursor:'pointer',fontFamily:'Libre Franklin',fontWeight:600,fontSize:14}}, this.state.copied?'Copied \u2713':'Copy BibTeX citation'),
           h('a',{href:'report/main.pdf',target:'_blank',style:{padding:'12px 22px',borderRadius:9,border:'1px solid rgba(255,255,255,.25)',color:'#f4f1ea',fontWeight:600,fontSize:14,textDecoration:'none'}},'Open report/main.pdf'),
+          h('a',{href:'https://github.com/iamademar/birdclef-2026-synthetic-audio-augmentation',target:'_blank',rel:'noopener',style:{padding:'12px 22px',borderRadius:9,border:'1px solid rgba(255,255,255,.25)',color:'#f4f1ea',fontWeight:600,fontSize:14,textDecoration:'none'}},'Code on GitHub \u2197'),
           h('button',{onClick:()=>this.go('top'),style:{background:'none',border:'none',color:C.tealL,cursor:'pointer',fontSize:13.5,fontWeight:600}},'\u2191 Back to top')),
         h('pre',{className:'om-scroll',style:{marginTop:24,padding:'16px',background:'rgba(0,0,0,.25)',borderRadius:8,fontFamily:"'IBM Plex Mono',monospace",fontSize:11.5,color:'#bcc4b8',overflowX:'auto',lineHeight:1.6}}, bib)));
   }
