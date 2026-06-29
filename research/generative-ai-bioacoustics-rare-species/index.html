@@ -261,7 +261,8 @@ class Component extends DCLogic {
       level: 0, active: 0, glossary: false, evidence: false,
       term: null, reduced: false, staticMode: false, hc: false,
       expanded: {}, started: false, band: 0, abReal: true,
-      domainAnimal: 'weeping-frog', photoErr: {}, videoModal: null, speciesModal: null
+      domainAnimal: 'weeping-frog', photoErr: {}, videoModal: null, speciesModal: null,
+      mobile: false
     };
     this.stepEls = [];
     this.wave = { focal:null, soundscape:null };
@@ -274,8 +275,15 @@ class Component extends DCLogic {
   componentDidMount(){
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (mq.matches) this.setState({ reduced: true });
+    // Mobile breakpoint: drives the single-column inline-figure layout (mirrors the reduced-motion pattern above).
+    this._mqMobile = window.matchMedia('(max-width: 760px)');
+    this._onMobile = (e)=>{ const m = e ? e.matches : this._mqMobile.matches;
+      if(m !== this.state.mobile) this.setState({ mobile:m }); };
+    this._onMobile();
+    if(this._mqMobile.addEventListener) this._mqMobile.addEventListener('change', this._onMobile);
+    else this._mqMobile.addListener(this._onMobile);   // older Safari
     this._compute = ()=>{
-      if(this.state.staticMode || this.state.glossary || this.state.evidence) return;
+      if(this.state.mobile || this.state.staticMode || this.state.glossary || this.state.evidence) return;
       const center = (document.documentElement.clientHeight || 800) * 0.5;
       let best=0, bestDist=Infinity;
       document.querySelectorAll('[data-idx]').forEach(el=>{
@@ -295,6 +303,10 @@ class Component extends DCLogic {
   componentWillUnmount(){
     if(this._poll) clearInterval(this._poll);
     if(this._compute){ document.removeEventListener('scroll', this._compute, {capture:true}); window.removeEventListener('scroll', this._compute); }
+    if(this._mqMobile){
+      if(this._mqMobile.removeEventListener) this._mqMobile.removeEventListener('change', this._onMobile);
+      else this._mqMobile.removeListener(this._onMobile);
+    }
     this.teardownWave();
   }
   componentDidUpdate(){ this.syncWave(); }
@@ -431,7 +443,7 @@ class Component extends DCLogic {
         ]}
     ];
   }
-  flat(){ const out=[]; this.sections().forEach((s,si)=>s.steps.forEach((st,li)=>out.push(Object.assign({},st,{sectionKey:s.key,si,li,nSteps:s.steps.length,secTitle:s.title,num:s.num})))); return out; }
+  flat(){ const out=[]; this.sections().forEach((s,si)=>s.steps.forEach((st,li)=>out.push(Object.assign({},st,{sectionKey:s.key,si,li,nSteps:s.steps.length,secTitle:s.title,num:s.num,__gidx:out.length})))); return out; }
 
   // ---- helpers ----
   trans(extra){ return this.state.reduced ? 'none' : (extra||'all .5s cubic-bezier(.2,.7,.2,1)'); }
@@ -440,14 +452,16 @@ class Component extends DCLogic {
   expOpen(k){ const v=this.state.expanded[k]; if(v!==undefined) return v; const lvl=this.state.level; if(k.endsWith('|further')) return lvl>=1; if(k.endsWith('|tech')) return lvl>=3; return false; }
 
   // ================= STAGE =================
-  renderStage(){
-    const steps=this.flat(); const st=steps[this.state.active]||steps[0];
-    const key=st.sectionKey; const reveal=st.li;
+  renderStageFor(sectionKey, reveal){
     const map={ hook:'stHook', longtail:'stLong', domain:'stDomain', taxa:'stTaxa', idea:'stIdea',
       matrix:'stMatrix', pipeline:'stPipe', filter:'stFilter', result:'stResult', benefit:'stBenefit',
       tradeoff:'stTrade', meaning:'stMeaning', synthesis:'stSynth' };
-    const node=this[map[key]] ? this[map[key]](reveal) : null;
-    return h('div',{key:key, style:{width:'100%',height:'100%',animation:this.state.reduced?'none':'fadeUp .45s ease'}}, node);
+    return this[map[sectionKey]] ? this[map[sectionKey]](reveal) : null;
+  }
+  renderStage(){
+    const steps=this.flat(); const st=steps[this.state.active]||steps[0];
+    const node=this.renderStageFor(st.sectionKey, st.li);
+    return h('div',{key:st.sectionKey, style:{width:'100%',height:'100%',animation:this.state.reduced?'none':'fadeUp .45s ease'}}, node);
   }
   stageCaption(txt, fig){ return h('div',{style:{position:'absolute',left:0,right:0,bottom:0,padding:'14px 22px',background:'linear-gradient(transparent,rgba(20,25,20,.04))',fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.mut,letterSpacing:'.02em',display:'flex',justifyContent:'space-between',gap:12}},
     h('span',{}, txt), fig?h('span',{style:{color:C.faint}}, fig):null); }
@@ -740,11 +754,11 @@ class Component extends DCLogic {
       h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,color:C.tealL,letterSpacing:'.08em'}},label),
       h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13.5,color:C.ink,marginTop:3,lineHeight:1.25}},name),
       h('div',{style:{fontSize:10.5,color:C.mut,marginTop:3}},desc),
-      score!=null?h('div',{style:{marginTop:8,fontSize:22,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif",color:best?C.teal:C.ink}}, score.toFixed(4)):null,
+      score!=null?h('div',{style:{marginTop:8,fontSize:this.state.mobile?18:22,fontWeight:700,fontFamily:"'Libre Franklin',sans-serif",color:best?C.teal:C.ink}}, score.toFixed(4)):null,
       best&&on?h('div',{style:{position:'absolute',top:-10,right:10,background:C.teal,color:'#fff',fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:10,fontFamily:'Libre Franklin'}},'best'):null);
   }
   matrixGrid(showScores, reveal){
-    return h('div',{style:{display:'grid',gridTemplateColumns:'120px 1fr 1fr',gridTemplateRows:'auto 1fr 1fr',gap:10,flex:1}},
+    return h('div',{style:{display:'grid',gridTemplateColumns:this.state.mobile?'68px 1fr 1fr':'120px 1fr 1fr',gridTemplateRows:'auto 1fr 1fr',gap:this.state.mobile?6:10,flex:1}},
       h('div',{}), 
       h('div',{style:{textAlign:'center',fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13,color:C.sub,alignSelf:'end',paddingBottom:4}},'A. Frozen BirdNET + logreg'),
       h('div',{style:{textAlign:'center',fontFamily:'Fraunces,serif',fontWeight:600,fontSize:13,color:C.sub,alignSelf:'end',paddingBottom:4}},'B. Fine-tuned EfficientNet'),
@@ -968,7 +982,7 @@ class Component extends DCLogic {
         h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:12,letterSpacing:'.18em',color:C.tealL,textTransform:'uppercase',marginBottom:14}},'14 \u00b7 The toolbox'),
         h('h2',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:'clamp(26px,4vw,40px)',margin:'0 0 12px',lineHeight:1.15,color:C.ink}},'Tech stack'),
         h('p',{style:{fontFamily:'Newsreader,serif',fontSize:17,lineHeight:1.62,color:C.sub,maxWidth:700,margin:'0 0 38px'}},'A short coda for the curious \u2014 every open-source library behind the study, grouped by what it does. Sound enters as audio I/O, forks through two model paths, and a generator feeds synthetic clips back into training.'),
-        h('div',{style:{columns:'330px',columnGap:'22px'}}, cats.map(card))));
+        h('div',{style:{columns:'280px',columnGap:'22px'}}, cats.map(card))));
   }
 
   // ================= PERSONAL NOTE (closing block) =================
@@ -980,7 +994,7 @@ class Component extends DCLogic {
       h('div',{style:{maxWidth:1140,margin:'0 auto'}},
         h('div',{style:Object.assign({},mono,{fontSize:12,letterSpacing:'.18em',color:C.tealL,textTransform:'uppercase',marginBottom:14})},'15 · From the author'),
         h('h2',{style:{fontFamily:'Fraunces,serif',fontWeight:600,fontSize:'clamp(26px,4vw,40px)',margin:'0 0 12px',lineHeight:1.15,color:C.ink}},'A personal note'),
-        h('div',{style:{display:'grid',gridTemplateColumns:'minmax(0,0.85fr) minmax(0,1.15fr)',gap:30,alignItems:'start'}},
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:30,alignItems:'start'}},
           // ----- left: author photo + note -----
           h('div',{style:{breakInside:'avoid'}},
             h('div',{style:{background:C.card,border:'1px solid '+C.line,borderRadius:14,overflow:'hidden',boxShadow:'0 8px 30px rgba(31,40,33,.07)'}},
@@ -992,7 +1006,7 @@ class Component extends DCLogic {
               h('div',{style:{padding:'18px 20px 20px'}},
                 h('div',{style:Object.assign({},mono,{fontSize:10.5,letterSpacing:'.14em',textTransform:'uppercase',color:C.tealL,marginBottom:8})},'Hi, I’m Ademar 👋'),
                 h('p',{style:{fontFamily:'Newsreader,serif',fontSize:16.5,lineHeight:1.62,color:C.ink,margin:'0 0 12px'}},'This started life as a project for our ',h('b',{style:{color:C.teal}},'Deep Learning'),' class (COMPX525) at the University of Waikato. That’s me out front of the sign, equal parts proud and sleep-deprived.'),
-                h('p',{style:{fontFamily:'Newsreader,serif',fontSize:16.5,lineHeight:1.62,color:C.sub,margin:0}},'For the first few weeks I worked on the project by running the code overnight on my MacBook. That was enough to get part A1 of the experiment through, but it didn’t hold up for the other parts. It was probably 1–2 weeks in when I realized there was no optimization I could do that would make the code run on my MacBook; I needed to shift to actual GPUs. Hence, I moved to Google Colab L4 GPUs. The ',h('a',{href:'https://arxiv.org/abs/2010.15581',target:'_blank',rel:'noopener noreferrer',style:{color:C.teal,textDecoration:'underline'}},'compute schism'),' does exist!!! And because Colab sometimes drops the session midway when my MacBook goes to sleep, I had to keep it awake with ',h('code',{style:Object.assign({},mono,{fontSize:14.5,background:C.tealBg,padding:'1px 6px',borderRadius:4,color:C.teal})},'caffeinate -dimsu'),'.'))),
+                h('p',{style:{fontFamily:'Newsreader,serif',fontSize:16.5,lineHeight:1.62,color:C.sub,margin:0}},'For the first few weeks I worked on the project by running the code overnight on my MacBook. That was enough to get part A1 of the experiment through, but it didn’t hold up for the other parts. It was probably one or two weeks in when I realised there was no optimisation that would make the code run properly on my MacBook. I needed access to actual GPUs, so I moved the workload to Google Colab using L4 GPUs. The ',h('a',{href:'https://arxiv.org/abs/2010.15581',target:'_blank',rel:'noopener noreferrer',style:{color:C.teal,textDecoration:'underline'}},'compute schism'),' does exist!!! And because Colab sometimes drops the session midway when my MacBook goes to sleep, I had to keep it awake with ',h('code',{style:Object.assign({},mono,{fontSize:14.5,background:C.tealBg,padding:'1px 6px',borderRadius:4,color:C.teal})},'caffeinate -dimsu'),'.'))),
             h('div',{style:Object.assign({},mono,{fontSize:9.5,color:C.faint,marginTop:9,lineHeight:1.4})},'Photo: the author, outside the University of Waikato, Hamilton — Te Whare Wānanga o Waikato.')),
           // ----- right: grade / feedback -----
           h('div',{style:{breakInside:'avoid'}},
@@ -1021,8 +1035,8 @@ class Component extends DCLogic {
           h('span',{style:{display:'inline-block',transition:this.trans(),transform:this.expOpen(k)?'rotate(90deg)':'none'}},'\u25b8'), label),
         this.expOpen(k)?h('div',{style:{marginTop:8,fontSize:13.5,lineHeight:1.6,color:C.sub,paddingLeft:15,borderLeft:'2px solid '+C.line}}, body):null) : null;
     return h('div',{key:st.sectionKey+st.li,'data-idx':idx,className:'story-step',
-        style:{minHeight: st.li===0?'70vh':'62vh',display:'flex',flexDirection:'column',justifyContent:'center',padding:'30px 0'}},
-      h('div',{style:{opacity:a?1:.4,transition:this.trans(),transform:a?'none':'translateY(4px)'}},
+        style:{minHeight: this.state.mobile?'auto':(st.li===0?'70vh':'62vh'),display:'flex',flexDirection:'column',justifyContent:'center',padding:this.state.mobile?'18px 0':'30px 0'}},
+      h('div',{style:{opacity:(this.state.mobile||a)?1:.4,transition:this.trans(),transform:(this.state.mobile||a)?'none':'translateY(4px)'}},
         st.li===0?h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:11,letterSpacing:'.16em',color:C.tealL,textTransform:'uppercase',marginBottom:10}},
           st.num+' \u00b7 '+st.secTitle):null,
         h('p',{className:(st.sectionKey==='hook'&&st.li===0)?'dropcap':'',style:{fontFamily:'Newsreader,serif',fontSize:19,lineHeight:1.62,color:C.ink,margin:0,fontWeight:st.li===0?500:400,textWrap:'pretty'}}, this.linkify(st.main)),
@@ -1187,11 +1201,12 @@ class Component extends DCLogic {
 
   // ================= TOP BAR + RAIL =================
   topBar(){
-    const btn=(label,on,fn,extra)=>h('button',{onClick:fn,style:Object.assign({padding:'6px 12px',borderRadius:7,border:'1px solid '+(on?C.teal:C.line),background:on?C.teal:C.card,color:on?'#fff':C.sub,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:12,fontWeight:500},extra||{})}, label);
-    return h('div',{style:{position:'fixed',top:0,left:0,right:0,zIndex:40,display:'flex',alignItems:'center',gap:14,padding:'9px 20px',background:'rgba(242,235,221,.92)',backdropFilter:'blur(10px)',borderBottom:'1px solid '+C.line}},
+    const m=this.state.mobile;
+    const btn=(label,on,fn,extra)=>h('button',{onClick:fn,style:Object.assign({padding:m?'5px 9px':'6px 12px',borderRadius:7,border:'1px solid '+(on?C.teal:C.line),background:on?C.teal:C.card,color:on?'#fff':C.sub,cursor:'pointer',fontFamily:'Libre Franklin',fontSize:m?11:12,fontWeight:500},extra||{})}, label);
+    return h('div',{style:{position:'fixed',top:0,left:0,right:0,zIndex:40,display:'flex',alignItems:'center',flexWrap:m?'wrap':'nowrap',gap:m?8:14,padding:m?'8px 14px':'9px 20px',background:'rgba(242,235,221,.92)',backdropFilter:'blur(10px)',borderBottom:'1px solid '+C.line}},
       h('button',{onClick:()=>this.go('top'),style:{background:'none',border:'none',cursor:'pointer',textAlign:'left',padding:0}},
-        h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:14.5,color:C.ink,lineHeight:1}},'Can Generative AI Improve Bioacoustic Classification?'),
-        h('div',{style:{fontSize:10.5,color:C.mut,marginTop:2}},'A. Tutor \u00b7 BirdCLEF-2026 \u00b7 interactive explainer')),
+        h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:m?12.5:14.5,color:C.ink,lineHeight:1}},'Can Generative AI Improve Bioacoustic Classification?'),
+        m?null:h('div',{style:{fontSize:10.5,color:C.mut,marginTop:2}},'A. Tutor \u00b7 BirdCLEF-2026 \u00b7 interactive explainer')),
       h('div',{style:{flex:1}}),
       btn('Glossary', this.state.glossary, ()=>this.setState({glossary:true})),
       btn('Evidence', this.state.evidence, ()=>this.setState({evidence:true})),
@@ -1244,7 +1259,7 @@ class Component extends DCLogic {
         h('div',{style:{fontFamily:"'Libre Franklin',sans-serif",fontSize:12,letterSpacing:'.18em',color:C.tealL,textTransform:'uppercase',marginBottom:14}},'13 \u00b7 What to remember'),
         h('h2',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:'clamp(26px,4vw,40px)',margin:'0 0 12px',lineHeight:1.15}},'Synthetic audio is a targeted tool, not a cure.'),
         h('p',{style:{fontSize:15.5,lineHeight:1.7,color:'#cfd3c9',maxWidth:680,margin:'0 0 36px'}},'Used with a BirdNET verification gate, AudioLDM 2 audio lifted exactly the classes that needed it most \u2014 the rarest, data-starved species \u2014 but only for taxa the generator could render convincingly. The benefit is selective, and one headline metric can hide a trade-off.'),
-        h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:40}},
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:16,marginBottom:40}},
           takes.map((t,i)=>h('div',{key:i,style:{padding:'18px 20px',background:'rgba(255,255,255,.05)',borderRadius:10,border:'1px solid rgba(255,255,255,.1)'}},
             h('div',{style:{fontFamily:'Fraunces,serif',fontWeight:700,fontSize:22,color:C.tealL,marginBottom:8}}, (i+1).toString().padStart(2,'0')),
             h('div',{style:{fontSize:14,lineHeight:1.55,color:'#eceee6'}}, t[0]),
@@ -1398,21 +1413,36 @@ class Component extends DCLogic {
     }
     const steps=this.flat();
     const audioAt = steps.findIndex(s=>s.sectionKey==='filter' && s.li===1);
+    // Mobile: a single column where each section's text is followed by its own figure inline
+    // (the desktop "sticky figure beside text" model has no room on a phone).
+    const body = this.state.mobile
+      ? h('div',{style:{maxWidth:560,margin:'0 auto',padding:'0 18px'}},
+          this.sections().map(sec=>{
+            const lastReveal = sec.steps.length - 1;
+            return h('div',{key:'m-'+sec.key},
+              h('div',{id:'sec-'+sec.key,style:{position:'relative',top:-92,height:0}}),
+              steps.filter(s=>s.sectionKey===sec.key).map(st=>this.renderStep(st, st.__gidx)),
+              sec.key==='filter' ? h('div',{style:{paddingBottom:40}}, this.filterGallery()) : null,
+              h('div',{style:{margin:'10px 0 56px',borderRadius:12,overflow:'hidden',border:'1px solid '+C.line,boxShadow:'0 8px 30px rgba(31,40,33,.07)',background:C.panel,minHeight:'68vh'}},
+                h('div',{style:{width:'100%',minHeight:'68vh',height:'100%'}},
+                  this.renderStageFor(sec.key, lastReveal))));
+          }))
+      : h('div',{style:{display:'flex',gap:'4vw',maxWidth:1320,margin:'0 auto',padding:'0 clamp(20px,5vw,80px)',alignItems:'flex-start'}},
+          // story column
+          h('div',{style:{flex:'0 0 42%',maxWidth:480,paddingBottom:'30vh'}},
+            steps.map((st,idx)=>[
+              st.li===0?h('div',{key:'anchor'+st.sectionKey,id:'sec-'+st.sectionKey,style:{position:'relative',top:-60,height:0}}):null,
+              this.renderStep(st, idx),
+              idx===audioAt?h('div',{key:'audio',style:{paddingBottom:40}}, this.filterGallery()):null
+            ])),
+          // sticky stage
+          h('div',{style:{flex:1,position:'sticky',top:64,height:'calc(100vh - 84px)',paddingTop:20}},
+            h('div',{style:{width:'100%',height:'100%',borderRadius:12,overflow:'hidden',border:'1px solid '+C.line,boxShadow:'0 8px 30px rgba(31,40,33,.07)',background:C.panel}},
+              this.renderStage())));
     return h('div',{style:{background:C.bg,minHeight:'100vh', filter:this.state.hc?'contrast(1.15)':'none'}},
-      this.topBar(), this.rail(),
+      this.topBar(), this.state.mobile?null:this.rail(),
       this.hero(),
-      h('div',{style:{display:'flex',gap:'4vw',maxWidth:1320,margin:'0 auto',padding:'0 60px 0 80px',alignItems:'flex-start'}},
-        // story column
-        h('div',{style:{flex:'0 0 42%',maxWidth:480,paddingBottom:'30vh'}},
-          steps.map((st,idx)=>[
-            st.li===0?h('div',{key:'anchor'+st.sectionKey,id:'sec-'+st.sectionKey,style:{position:'relative',top:-60,height:0}}):null,
-            this.renderStep(st, idx),
-            idx===audioAt?h('div',{key:'audio',style:{paddingBottom:40}}, this.filterGallery()):null
-          ])),
-        // sticky stage
-        h('div',{style:{flex:1,position:'sticky',top:64,height:'calc(100vh - 84px)',paddingTop:20}},
-          h('div',{style:{width:'100%',height:'100%',borderRadius:12,overflow:'hidden',border:'1px solid '+C.line,boxShadow:'0 8px 30px rgba(31,40,33,.07)',background:C.panel}},
-            this.renderStage()))),
+      body,
       this.finalScreen(),
       this.techStack(),
       this.personalNote(),
